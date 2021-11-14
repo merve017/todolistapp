@@ -1,10 +1,10 @@
 # todolist_app
 
-A new Flutter project.
+A new Flutter project from the group of DON CARLo.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is developed from Carlo Spinello, Merve Taskaya and Tanja Wechselberger
 
 A few resources to get you started if this is your first Flutter project:
 
