@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "556311770094",
+    "project_id": "fh-todolistapp",
+    "storage_bucket": "fh-todolistapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556311770094:android:97c1fb35f8825b447654ff",
+        "android_client_info": {
+          "package_name": "com.fh.todolist_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556311770094-04gpeme1pf87n7orh86aji8caqu60btj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzr_7XfQ15hNvTRU84d8xzD8lVRaeMV8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556311770094-04gpeme1pf87n7orh86aji8caqu60btj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "556311770094-r3fip0prjd35s11evud3ioch7lr5k1s0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.fh.todolistApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
