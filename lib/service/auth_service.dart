@@ -9,7 +9,14 @@ import 'package:todolist_app/models/user_model.dart';
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static User? user = _auth.currentUser;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn();
+  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+    clientId:
+        '556311770094-r3fip0prjd35s11evud3ioch7lr5k1s0.apps.googleusercontent.com',
+    scopes: <String>[
+      'email',
+      'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
 
   static UserModel userFromFirebase(User user) {
     return UserModel(uid: user.uid);
@@ -149,6 +156,9 @@ class AuthService {
   // sign out
   static Future signOut() async {
     try {
+      if (_googleSignIn.isSignedIn() as bool) {
+        _googleSignIn.signOut();
+      }
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());
