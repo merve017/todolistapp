@@ -67,3 +67,20 @@ Widget textLabel(text) {
 const placeHolder = SizedBox(
   height: 20,
 );
+
+enum Repetition { NONE, DAILY, WEEKLY, MONTHLY, YEARLY }
+
+extension RepetitionExtension on Repetition {
+  String get name {
+    switch (this) {
+      case Repetition.WEEKLY:
+        return 'Wöchentlich';
+      case Repetition.MONTHLY:
+        return 'Monatlich';
+      case Repetition.YEARLY:
+        return 'Jährlich';
+      default:
+        return 'keine Wiederholung';
+    }
+  }
+}

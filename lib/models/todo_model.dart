@@ -11,11 +11,14 @@ class Todo {
   @JsonKey(name: "description")
   String? description;
 
-  @JsonKey(name: "priority", defaultValue: 5)
+  @JsonKey(name: "priority", defaultValue: 1)
   int? priority;
 
   @JsonKey(name: "status", defaultValue: false)
   bool? status;
+
+  @JsonKey(name: "done_date")
+  DateTime? doneDate;
 
   @JsonKey(name: "due_date")
   DateTime? dueDate;
@@ -26,6 +29,9 @@ class Todo {
   @JsonKey(name: "weekdays")
   List<bool> weekdays;
 
+  @JsonKey(name: "repetition")
+  int? repetition;
+
   Todo(
       {this.uid,
       required this.title,
@@ -34,19 +40,22 @@ class Todo {
       this.status,
       this.routine,
       this.dueDate,
+      this.doneDate,
+      this.repetition,
       required this.weekdays});
 
   factory Todo.fromMap(map) {
     return Todo(
-      uid: map['uuid'],
-      title: map['todo_Title'],
-      description: map['description'],
-      priority: map['priority'],
-      status: map['status'],
-      routine: map['routine'],
-      dueDate: map['due_date'],
-      weekdays: map['weekdays'],
-    );
+        uid: map['uuid'],
+        title: map['todo_Title'],
+        description: map['description'],
+        priority: map['priority'],
+        status: map['status'],
+        routine: map['routine'],
+        dueDate: map['due_date'],
+        doneDate: map['doneDate'],
+        weekdays: map['weekdays'],
+        repetition: map['repetition']);
   }
 
   Map<String, dynamic> toMap() {
@@ -58,7 +67,9 @@ class Todo {
       'priority': priority,
       'routine': routine,
       'due_date': dueDate,
-      'weekdays': weekdays
+      'done_date': doneDate,
+      'weekdays': weekdays,
+      'repetition': repetition,
     };
   }
 
@@ -67,15 +78,19 @@ class Todo {
         uid: json['uid'] as String? ?? '',
         title: json['title'] as String? ?? '',
         description: json['description'] as String?,
-        priority: json['priority'] as int? ?? 5,
+        priority: json['priority'] as int? ?? 1,
         status: json['status'] as bool? ?? false,
         dueDate: json['due_date'] == null
             ? null
             : json['due_date'].toDate() as DateTime?,
+        doneDate: json['done_date'] == null
+            ? null
+            : json['done_date'].toDate() as DateTime?,
         routine: json['routine'] as bool? ?? false,
         weekdays: json['weekdays'] == null
             ? List<bool>.filled(7, false)
-            : (json['weekdays'].cast<bool>()));
+            : (json['weekdays'].cast<bool>()),
+        repetition: json['repetition'] == null ? 0 : json['repetition'] as int);
   }
 
   Map<String, dynamic> toJson(Todo instance) => <String, dynamic>{
@@ -86,7 +101,9 @@ class Todo {
         'priority': priority,
         'routine': routine,
         'due_date': dueDate,
-        'weekdays': weekdays
+        'done_date': doneDate,
+        'weekdays': weekdays,
+        'repetition': repetition
       };
 
   List<bool> weekdaysfromJson(data) {

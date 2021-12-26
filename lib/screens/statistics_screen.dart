@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/constants.dart';
 import 'package:todolist_app/shared/loading.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+
+import 'statistics/bar_chart.dart';
+import 'statistics/pie_chart.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({Key? key}) : super(key: key);
@@ -46,90 +48,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     return const Center(child: Text("All ToDos are caught up"));
                   } else {
                     // if (snapshot.hasData && snapshot.data!.size > 0) {
-                    return Wrap(
+                    return SingleChildScrollView(
+                        child: Wrap(
                       children: [
+                        // snapshot.data!.docs.where((QueryDocumentSnapshot<Object?> element) => element['status'].toString());
                         Container(
                             alignment: Alignment.centerLeft,
                             child: Text(
                                 'Anzahl der Todos: ${snapshot.data!.size}')),
                         placeHolder,
-                        const Counts(),
-                        SizedBox(
-                            width: 100,
-                            height: 100,
-                            child: SimplePieChart.withSampleData())
+                        SimplePieChart(snapshot: snapshot),
+                        placeHolder,
+                        ColumnDefault(snapshot: snapshot)
                       ],
-                    );
+                    ));
                   }
                 }));
   }
-}
-
-class Counts extends StatelessWidget {
-  const Counts({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: TodoService().getTodoListOfCurrentUserofOpenTodos(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          return Wrap(//alignment: Alignment.centerLeft,
-              children: [
-            const Text("Anzahl"),
-            snapshot.data == null
-                ? const Text("0")
-                : Text("${snapshot.data!.size}"),
-          ]);
-        });
-  }
-}
-
-class SimplePieChart extends StatelessWidget {
-  final List<charts.Series> seriesList;
-  final bool animate;
-
-  const SimplePieChart(
-      {Key? key, required this.seriesList, required this.animate})
-      : super(key: key);
-
-  /// Creates a [PieChart] with sample data and no transition.
-  factory SimplePieChart.withSampleData() {
-    return SimplePieChart(
-      seriesList: _createSampleData(),
-      // Disable animations for image tests.
-      animate: false,
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return charts.PieChart(seriesList, animate: animate);
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<LinearSales, int>> _createSampleData() {
-    final data = [
-      LinearSales(0, 100),
-      LinearSales(1, 75),
-      LinearSales(2, 25),
-      LinearSales(3, 5),
-    ];
-
-    return [
-      charts.Series<LinearSales, int>(
-        id: 'Sales',
-        domainFn: (LinearSales sales, _) => sales.year,
-        measureFn: (LinearSales sales, _) => sales.sales,
-        data: data,
-      )
-    ];
-  }
-}
-
-/// Sample linear data type.
-class LinearSales {
-  final int year;
-  final int sales;
-
-  LinearSales(this.year, this.sales);
 }

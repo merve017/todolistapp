@@ -101,8 +101,8 @@ class _TodoListState extends State<TodoList> {
                                   });
                                 }
                               }),
-                              leading: const Icon(Icons.fiber_manual_record,
-                                  color: Colors.green),
+                              leading: Icon(Icons.fiber_manual_record,
+                                  color: color(todo)),
                               title: Text(
                                 todo.title,
                                 style: const TextStyle(color: Colors.black),
@@ -113,6 +113,9 @@ class _TodoListState extends State<TodoList> {
                                   onChanged: (value) {
                                     setState(() {
                                       todo.status = value;
+                                      todo.doneDate = todo.status == true
+                                          ? DateTime.now()
+                                          : null;
                                       TodoService().updateByID(
                                           todo.toJson(todo),
                                           todo.uid as String);
@@ -152,7 +155,7 @@ class _TodoListState extends State<TodoList> {
                                           inactiveColor: Colors.blueGrey,
                                           value: todo.priority,
                                           stepSize: 1,
-                                          max: 5,
+                                          max: 4,
                                           min: 1,
                                           interval: 1,
                                           showLabels: true,
@@ -160,16 +163,14 @@ class _TodoListState extends State<TodoList> {
                                               (dynamic actualValue,
                                                   String formattedText) {
                                             switch (actualValue) {
-                                              case 1:
-                                                return 'low';
-                                              case 2:
-                                                return 'medium/low';
+                                              case 4:
+                                                return 'high';
                                               case 3:
                                                 return 'medium';
-                                              case 4:
-                                                return 'high/medium';
+                                              case 2:
+                                                return 'low';
                                               default:
-                                                return 'high';
+                                                return 'not prioritized';
                                             }
                                           },
                                           onChanged: (dynamic value) {
@@ -193,5 +194,25 @@ class _TodoListState extends State<TodoList> {
               }
             },
           );
+  }
+}
+
+MaterialColor color(Todo todo) {
+  if (todo.status == true) {
+    return Colors.green;
+  } else {
+    switch (todo.priority) {
+      case 2:
+        return Colors.yellow;
+        break;
+      case 3:
+        return Colors.orange;
+        break;
+      case 4:
+        return Colors.red;
+        break;
+      default:
+        return Colors.grey;
+    }
   }
 }

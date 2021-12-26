@@ -51,8 +51,9 @@ dependencies:
   flutter_signin_button: ^2.0.0
   syncfusion_flutter_sliders: ^19.3.57
   intl: ^0.17.0
-  charts_flutter: ^0.12.0
   weekday_selector: ^1.0.0
+  syncfusion_flutter_charts: ^19.4.38
+  syncfusion_flutter_calendar: ^19.4.38
 
 dev_dependencies:
   flutter_test: 

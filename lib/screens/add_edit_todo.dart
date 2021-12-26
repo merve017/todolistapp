@@ -28,6 +28,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
   DateTime? _dueDate; //= DateTime.now();
   List<bool> _weekdays = List<bool>.filled(7, false);
   final DateSymbols de = dateTimeSymbolMap()['de'];
+  Repetition _repetition = Repetition.NONE;
 
   @override
   void initState() {
@@ -42,6 +43,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
           widget.todo!.dueDate == null ? null : widget.todo!.dueDate!.toLocal();
       _routine = widget.todo!.routine as bool;
       _weekdays = widget.todo!.weekdays;
+      _repetition = Repetition.values[widget.todo!.repetition as int];
     }
   }
 
@@ -133,6 +135,53 @@ class _AddEditTodoState extends State<AddEditTodo> {
                             })
                       ],
                     ),
+                    if (_routine == true) placeHolder,
+                    if (_routine == true)
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            textLabel("Wiederholung: "),
+                            DropdownButton<String>(
+                              value: _repetition.name,
+                              icon: const Icon(Icons.arrow_downward),
+                              elevation: 16,
+                              style: const TextStyle(color: Colors.deepPurple),
+                              underline: Container(
+                                height: 2,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  switch (newValue) {
+                                    case 'Wöchentlich':
+                                      _repetition = Repetition.WEEKLY;
+                                      break;
+                                    case 'Monatlich':
+                                      _repetition = Repetition.MONTHLY;
+                                      break;
+                                    case 'Jährlich':
+                                      _repetition = Repetition.YEARLY;
+                                      break;
+                                    default:
+                                      _repetition = Repetition.NONE;
+                                  }
+                                });
+                              },
+                              items: <String>[
+                                Repetition.NONE.name,
+                                Repetition.WEEKLY.name,
+                                Repetition.MONTHLY.name,
+                                Repetition.YEARLY.name,
+                              ].map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ]),
                     if (_routine == true) placeHolder,
                     if (_routine == true)
                       WeekdaySelector(
@@ -231,7 +280,9 @@ class _AddEditTodoState extends State<AddEditTodo> {
           status: _status,
           dueDate: _dueDate,
           routine: _routine,
-          weekdays: _weekdays);
+          doneDate: _status == true ? DateTime.now() : null,
+          weekdays: _weekdays,
+          repetition: _repetition.index);
       if (widget.todo == null) {
         TodoService().add(todo.toJson(todo));
       } else {
@@ -247,22 +298,20 @@ class _AddEditTodoState extends State<AddEditTodo> {
         inactiveColor: Colors.blueGrey,
         value: _priority,
         stepSize: 1,
-        max: 5,
+        max: 4,
         min: 1,
         interval: 1,
         showLabels: true,
         labelFormatterCallback: (dynamic actualValue, String formattedText) {
           switch (actualValue) {
-            case 1:
-              return 'low';
-            case 2:
-              return 'medium/low';
+            case 4:
+              return 'high';
             case 3:
               return 'medium';
-            case 4:
-              return 'high/medium';
+            case 2:
+              return 'low';
             default:
-              return 'high';
+              return 'not prioritized';
           }
         },
         onChanged: (dynamic value) {
