@@ -39,3 +39,31 @@ const textInputDecoration = InputDecoration(
     borderSide: BorderSide(color: Colors.pink, width: 2.0),
   ),
 );
+
+InputDecoration textFormFieldDecoration(String title) {
+  return InputDecoration(
+      contentPadding: const EdgeInsets.all(8),
+      prefixIcon: const Icon(Icons.description),
+      hintText: title,
+      hintStyle: kHintStyle,
+      fillColor: Colors.grey[200],
+      filled: true,
+      enabledBorder: kOutlineBorder,
+      focusedBorder: kOutlineBorder,
+      errorBorder: kOutLineErrorBorder,
+      focusedErrorBorder: kOutLineErrorBorder);
+}
+
+Widget textLabel(text) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: SizedBox(
+      height: 25,
+      child: Text(text),
+    ),
+  );
+}
+
+const placeHolder = SizedBox(
+  height: 20,
+);

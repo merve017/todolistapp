@@ -3,10 +3,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:todolist_app/models/todo_model.dart';
 import 'package:flutter/material.dart';
+import 'package:todolist_app/screens/add_edit_todo.dart';
 import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/loading.dart';
-
-import 'edit_todo.dart';
 
 class TodoList extends StatefulWidget {
   const TodoList({Key? key}) : super(key: key);
@@ -68,7 +67,7 @@ class _TodoListState extends State<TodoList> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => EditTodo(
+                                    builder: (context) => AddEditTodo(
                                       todo: todo,
                                     ),
                                   ),
@@ -146,8 +145,8 @@ class _TodoListState extends State<TodoList> {
                                     )),
                                 Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                        padding: const EdgeInsets.all(8),
+                                    child: Container(
+                                        padding: const EdgeInsets.all(8.0),
                                         child: SfSlider(
                                           activeColor: Colors.blue,
                                           inactiveColor: Colors.blueGrey,
@@ -160,7 +159,7 @@ class _TodoListState extends State<TodoList> {
                                           labelFormatterCallback:
                                               (dynamic actualValue,
                                                   String formattedText) {
-                                            switch (int.parse(actualValue)) {
+                                            switch (actualValue) {
                                               case 1:
                                                 return 'low';
                                               case 2:
@@ -175,7 +174,7 @@ class _TodoListState extends State<TodoList> {
                                           },
                                           onChanged: (dynamic value) {
                                             setState(() {
-                                              todo.priority = int.parse(value);
+                                              todo.priority = value as int;
                                               TodoService().updateByID(
                                                   todo.toJson(todo),
                                                   todo.uid as String);

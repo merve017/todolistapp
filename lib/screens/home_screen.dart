@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/screens/authentication/signin_screen.dart';
+import 'package:todolist_app/screens/add_edit_todo.dart';
+import 'package:todolist_app/screens/statistics_screen.dart';
 import 'package:todolist_app/screens/todo_list_screen.dart';
 import 'package:todolist_app/service/auth_service.dart';
 import 'package:flutter/material.dart';
-
-import 'add_todo.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const AddTodo(),
+                  builder: (context) => const AddEditTodo(),
                 ),
               );
             },
@@ -69,6 +69,19 @@ class _HomeScreenState extends State<HomeScreen> {
               title: const Text('My Profile'),
               onTap: () {
                 Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.bar_chart_rounded),
+              title: const Text('Statistics'),
+              iconColor: Colors.black,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const StatisticsScreen(),
+                  ),
+                );
               },
             ),
             ListTile(

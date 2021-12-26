@@ -19,4 +19,10 @@ class TodoService extends DatabaseService {
   Stream<QuerySnapshot> getTodoListOfCurrentUser() {
     return getCollectionReference().snapshots();
   }
+
+  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodos() {
+    return getCollectionReference()
+        .where("status", isEqualTo: false)
+        .snapshots();
+  }
 }
