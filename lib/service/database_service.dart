@@ -5,8 +5,6 @@ class DatabaseService {
   String? uid = AuthService.user!.uid;
   DatabaseService({this.uid});
   // collection reference
-  final CollectionReference todoCollection =
-      FirebaseFirestore.instance.collection('todos');
 
   static final FirebaseFirestore db = FirebaseFirestore.instance;
 

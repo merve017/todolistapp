@@ -28,7 +28,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
   DateTime? _dueDate; //= DateTime.now();
   List<bool> _weekdays = List<bool>.filled(7, false);
   final DateSymbols de = dateTimeSymbolMap()['de'];
-  Repetition _repetition = Repetition.NONE;
+  Repetition _repetition = Repetition.none;
 
   @override
   void initState() {
@@ -156,24 +156,24 @@ class _AddEditTodoState extends State<AddEditTodo> {
                                 setState(() {
                                   switch (newValue) {
                                     case 'Wöchentlich':
-                                      _repetition = Repetition.WEEKLY;
+                                      _repetition = Repetition.weekly;
                                       break;
                                     case 'Monatlich':
-                                      _repetition = Repetition.MONTHLY;
+                                      _repetition = Repetition.monthly;
                                       break;
                                     case 'Jährlich':
-                                      _repetition = Repetition.YEARLY;
+                                      _repetition = Repetition.yearly;
                                       break;
                                     default:
-                                      _repetition = Repetition.NONE;
+                                      _repetition = Repetition.none;
                                   }
                                 });
                               },
                               items: <String>[
-                                Repetition.NONE.name,
-                                Repetition.WEEKLY.name,
-                                Repetition.MONTHLY.name,
-                                Repetition.YEARLY.name,
+                                Repetition.none.name,
+                                Repetition.weekly.name,
+                                Repetition.monthly.name,
+                                Repetition.yearly.name,
                               ].map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -316,7 +316,11 @@ class _AddEditTodoState extends State<AddEditTodo> {
         },
         onChanged: (dynamic value) {
           setState(() {
-            _priority = (value! as int);
+            if (value is String) {
+              _priority = int.parse(value);
+            } else {
+              _priority = value.toInt();
+            }
           });
         });
   }

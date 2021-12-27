@@ -35,10 +35,10 @@ class SimplePieChart extends StatelessWidget {
           explodeOffset: '10%',
           dataSource: <ChartSampleData>[
             ChartSampleData(
-                x: 'Offen', y: openTodo as double, text: 'Open $openTodo'),
+                x: 'Offen', y: openTodo.toDouble(), text: 'Open $openTodo'),
             ChartSampleData(
                 x: 'Abgeschlossen',
-                y: (snapshot.data!.size - openTodo) as double,
+                y: (snapshot.data!.size - openTodo).toDouble(),
                 text: 'Done \n ${snapshot.data!.size - openTodo}')
           ],
           xValueMapper: (ChartSampleData data, _) => data.x,

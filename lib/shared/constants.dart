@@ -68,16 +68,16 @@ const placeHolder = SizedBox(
   height: 20,
 );
 
-enum Repetition { NONE, DAILY, WEEKLY, MONTHLY, YEARLY }
+enum Repetition { none, daily, weekly, monthly, yearly }
 
 extension RepetitionExtension on Repetition {
   String get name {
     switch (this) {
-      case Repetition.WEEKLY:
+      case Repetition.weekly:
         return 'Wöchentlich';
-      case Repetition.MONTHLY:
+      case Repetition.monthly:
         return 'Monatlich';
-      case Repetition.YEARLY:
+      case Repetition.yearly:
         return 'Jährlich';
       default:
         return 'keine Wiederholung';

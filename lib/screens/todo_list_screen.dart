@@ -204,13 +204,10 @@ MaterialColor color(Todo todo) {
     switch (todo.priority) {
       case 2:
         return Colors.yellow;
-        break;
       case 3:
         return Colors.orange;
-        break;
       case 4:
         return Colors.red;
-        break;
       default:
         return Colors.grey;
     }

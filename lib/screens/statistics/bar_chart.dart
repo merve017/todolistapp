@@ -43,10 +43,10 @@ class ColumnDefault extends StatelessWidget {
     return <ColumnSeries<ChartSampleData, String>>[
       ColumnSeries<ChartSampleData, String>(
         dataSource: <ChartSampleData>[
-          ChartSampleData(x: 'Nicht priorisiert', y: notprioritized as double),
-          ChartSampleData(x: 'Niedrig', y: low as double),
-          ChartSampleData(x: 'Mittel', y: medium as double),
-          ChartSampleData(x: 'Hoch', y: high as double),
+          ChartSampleData(x: 'Nicht priorisiert', y: notprioritized.toDouble()),
+          ChartSampleData(x: 'Niedrig', y: low.toDouble()),
+          ChartSampleData(x: 'Mittel', y: medium.toDouble()),
+          ChartSampleData(x: 'Hoch', y: high.toDouble()),
         ],
         xValueMapper: (ChartSampleData data, _) => data.x,
         yValueMapper: (ChartSampleData data, _) => data.y,
