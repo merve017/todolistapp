@@ -3,6 +3,7 @@ import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/screens/authentication/signin_screen.dart';
 import 'package:todolist_app/screens/add_edit_todo.dart';
 import 'package:todolist_app/screens/calendar.dart';
+import 'package:todolist_app/screens/myprofile_screen.dart';
 import 'package:todolist_app/screens/statistics_screen.dart';
 import 'package:todolist_app/screens/todo_list_screen.dart';
 import 'package:todolist_app/service/auth_service.dart';
@@ -80,7 +81,12 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               title: const Text('My Profile'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyProfileScreen(),
+                  ),
+                );
               },
             ),
             ListTile(

@@ -117,7 +117,7 @@ class _RegisterState extends State<Register> {
     //password field
     final passwordField = TextFormField(
       autofocus: false,
-      obscureText: true,
+      obscureText: isObscure,
       validator: (value) {
         RegExp regex = RegExp(r'^.{6,}$');
         if (value!.isEmpty) {
@@ -159,7 +159,7 @@ class _RegisterState extends State<Register> {
     //confirm password field
     final confirmPasswordField = TextFormField(
       autofocus: false,
-      obscureText: true,
+      obscureText: isObscurePassword,
       validator: (value) {
         if (confirmPassword != password) {
           return "Password don't match";
@@ -184,7 +184,6 @@ class _RegisterState extends State<Register> {
           suffixIcon: InkWell(
               onTap: () {
                 setState(() {
-                  isObscure = !isObscurePassword;
                   isObscurePassword = !isObscurePassword;
                 });
               },
