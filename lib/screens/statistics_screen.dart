@@ -45,7 +45,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                       ),
                     );
                   } else if (snapshot.data!.size == 0) {
-                    return const Center(child: Text("All ToDos are caught up"));
+                    return const Center(child: Text("Keine To-Do's vorhanden"));
                   } else {
                     // if (snapshot.hasData && snapshot.data!.size > 0) {
                     return SingleChildScrollView(

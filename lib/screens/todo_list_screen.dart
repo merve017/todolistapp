@@ -33,11 +33,6 @@ class _TodoListState extends State<TodoList> {
       });
   }
 
-  void _scrollToTop() {
-    _scrollController.animateTo(0,
-        duration: Duration(seconds: 3), curve: Curves.linear);
-  }
-
   @override
   Widget build(BuildContext context) {
     return loading
@@ -49,53 +44,6 @@ class _TodoListState extends State<TodoList> {
                 openTodos(),
                 closedTodos(),
               ]);
-
-    /*ListView(physics: const ClampingScrollPhysics(), children: [
-            openTodos(),
-            closedTodos(),
-          ]);*/
-    /*StreamBuilder<QuerySnapshot>(
-            stream: TodoService().getTodoListOfCurrentUser(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              const Loading();
-              if (snapshot.hasError) {
-                return const Text("Something went wrong");
-                // Fluttertoast.showToast(msg: 'Something went wrong');
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: Text(
-                    "Loading",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              } else if (snapshot.data!.size == 0) {
-                return const Center(child: Text("All ToDos are caught up"));
-              } else {
-                // if (snapshot.hasData && snapshot.data!.size > 0) {
-                return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: ListView(children: [
-                      ExpansionTile(
-                        title: const Text("Open"),
-                        initiallyExpanded: true,
-                        children: [
-                          ListView.builder(
-                              shrinkWrap: true,
-                              physics: const ClampingScrollPhysics(),
-                              itemCount: snapshot.data!.docs.length,
-                              itemBuilder: (context, index) {
-                                Todo todo = Todo.fromJson(
-                                    snapshot.data!.docs[index].data()
-                                        as Map<String, dynamic>);
-                                return toDoTile(context, todo, index);
-                              })
-                        ],
-                      )
-                    ]));
-              }
-            },
-          );*/
   }
 
   Widget toDoTile(BuildContext context, Todo todo, int index) {
@@ -215,25 +163,25 @@ class _TodoListState extends State<TodoList> {
           style: TextStyle(color: Colors.white),
         ),
       );
-    } else if (snapshot.data!.size == 0) {
-      return const Center(child: Text("Keine offenen Todos vorhanden"));
     } else {
       // if (snapshot.hasData && snapshot.data!.size > 0) {
       return ExpansionTile(
           title: Text(title),
-          initiallyExpanded: true,
+          initiallyExpanded: title.contains("Offen") ? true : false,
           children: [
-            SizedBox(
-                //height: MediaQuery.of(context).size.height * 0.7,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      Todo todo = Todo.fromJson(snapshot.data!.docs[index]
-                          .data() as Map<String, dynamic>);
-                      return toDoTile(context, todo, index);
-                    }))
+            snapshot.data!.size == 0
+                ? Center(child: Text("Keine $title vorhanden"))
+                : SizedBox(
+                    //height: MediaQuery.of(context).size.height * 0.7,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          Todo todo = Todo.fromJson(snapshot.data!.docs[index]
+                              .data() as Map<String, dynamic>);
+                          return toDoTile(context, todo, index);
+                        }))
           ]);
     }
   }

@@ -1,10 +1,14 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:todolist_app/models/todo_model.dart';
+import 'package:todolist_app/service/todo_service.dart';
+import 'package:todolist_app/shared/loading.dart';
 
 class AgendaViewCalendar extends StatefulWidget {
   /// Create  default agenda view calendar
@@ -20,11 +24,12 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
   late _MeetingDataSource _events;
   final CalendarController _calendarController = CalendarController();
   late Orientation _deviceOrientation;
+  late List<Todo> _todos;
 
   @override
   void initState() {
     _calendarController.selectedDate = DateTime.now();
-    _events = _MeetingDataSource(_getAppointments());
+    //_events = _MeetingDataSource(_getAppointments());
     super.initState();
   }
 
@@ -36,40 +41,53 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
 
   @override
   Widget build(BuildContext context) {
-    return isWebFullView == false && _deviceOrientation == Orientation.landscape
-        ? Scrollbar(
-            child: ListView(
-            children: <Widget>[
-              Container(
-                color: Colors.white,
-                height: 600,
-                child: _getAgendaViewCalendar(
-                    _events, _onViewChanged, _calendarController),
-              )
-            ],
-          ))
-        : Container(
-            color: Colors.white,
-            child: _getAgendaViewCalendar(
-                _events, _onViewChanged, _calendarController),
-          );
+    return StreamBuilder<QuerySnapshot>(
+        stream: TodoService().getTodoListOfCurrentUser(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          const Loading();
+          if (snapshot.hasError) {
+            return const Text(
+                "Etwas ging schief - bitte aktualisiere die Seite");
+            // Fluttertoast.showToast(msg: 'Something went wrong');
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: Text(
+                "Laden...",
+                style: TextStyle(color: Colors.white),
+              ),
+            );
+          } else {
+            return isWebFullView == false &&
+                    _deviceOrientation == Orientation.landscape
+                ? Scrollbar(
+                    child: ListView(
+                    children: <Widget>[
+                      Container(
+                        color: Colors.white,
+                        height: 600,
+                        child: _getAgendaViewCalendar(
+                            _getAppointments(snapshot),
+                            _onViewChanged,
+                            _calendarController),
+                      )
+                    ],
+                  ))
+                : Container(
+                    color: Colors.white,
+                    child: _getAgendaViewCalendar(_getAppointments(snapshot),
+                        _onViewChanged, _calendarController),
+                  );
+          }
+        });
   }
 
   /// Method that creates the collection the data source for calendar, with
   /// required information.
-  List<_Meeting> _getAppointments() {
+  _MeetingDataSource _getAppointments(AsyncSnapshot<QuerySnapshot> snapshot) {
     /// Creates the required appointment subject details as a list.
-    final List<String> subjectCollection = <String>[];
-    subjectCollection.add('General Meeting');
-    subjectCollection.add('Plan Execution');
-    subjectCollection.add('Project Plan');
-    subjectCollection.add('Consulting');
-    subjectCollection.add('Support');
-    subjectCollection.add('Development Meeting');
-    subjectCollection.add('Scrum');
-    subjectCollection.add('Project Completion');
-    subjectCollection.add('Release updates');
-    subjectCollection.add('Performance Check');
+    ///
+    ///
+    _todos = <Todo>[];
 
     /// Creates the required appointment color details as a list.
     final List<Color> colorCollection = <Color>[];
@@ -86,46 +104,90 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
 
     final List<_Meeting> meetings = <_Meeting>[];
     final Random random = Random();
-    final DateTime rangeStartDate =
-        DateTime.now().add(const Duration(days: -(365 ~/ 2)));
-    final DateTime rangeEndDate = DateTime.now().add(const Duration(days: 365));
-    for (DateTime i = rangeStartDate;
-        i.isBefore(rangeEndDate);
-        i = i.add(const Duration(days: 1))) {
-      final DateTime date = i;
-      final int count = 1 + random.nextInt(3);
-      for (int j = 0; j < count; j++) {
-        final DateTime startDate = DateTime(
-            date.year, date.month, date.day, 8 + random.nextInt(8), 0, 0);
-        meetings.add(_Meeting(
-            subjectCollection[random.nextInt(7)],
-            '',
-            '',
-            null,
-            startDate,
-            startDate.add(Duration(hours: random.nextInt(3))),
-            colorCollection[random.nextInt(9)],
-            false,
-            '',
-            '',
-            ''));
+    for (var item in snapshot.data!.docs) {
+      Todo todo = Todo.fromJson(item.data() as Map<String, dynamic>);
+      _todos.add(Todo.fromJson(item.data() as Map<String, dynamic>));
+      meetings.add(_Meeting(
+          todo.title,
+          getDate(todo.doneDate, todo.dueDate),
+          getDate(todo.doneDate, todo.dueDate),
+          colorCollection[random.nextInt(9)],
+          true,
+          '',
+          '',
+          todo.routine == true ? freq(todo) : ''));
+    }
+    _events = _MeetingDataSource(meetings);
+    return _events;
+  }
+
+  DateTime getDate(DateTime? doneDate, DateTime? dueDate) {
+    if (doneDate != null) {
+      return doneDate;
+    }
+    if (dueDate != null) {
+      if (dueDate.isAfter(DateTime.now())) {
+        return dueDate;
       }
     }
+    return DateTime.now();
+  }
 
-    // added recurrence appointment
-    meetings.add(_Meeting(
-        'Development status',
-        '',
-        '',
-        null,
-        DateTime.now(),
-        DateTime.now().add(const Duration(hours: 2)),
-        colorCollection[random.nextInt(9)],
-        false,
-        '',
-        '',
-        'FREQ=WEEKLY;BYDAY=FR;INTERVAL=1'));
-    return meetings;
+  String freq(Todo todo) {
+    String output = '';
+    switch (todo.repetition) {
+      case 3:
+        output += 'FREQ=MONTHLY;';
+        break;
+      case 4:
+        output += 'FREQ=YEARLY;';
+        break;
+      default:
+        output += 'FREQ=WEEKLY;';
+    }
+    output += "BYDAY=";
+    String weekdays = '';
+    for (int i = 0; i < todo.weekdays.length; i++) {
+      if (todo.weekdays[i]) {
+        weekdays != '' ? weekdays += ',' : '';
+        switch (i) {
+          case 1:
+            weekdays += 'MO';
+            break;
+          case 2:
+            weekdays += 'TU';
+            break;
+          case 3:
+            weekdays += 'WE';
+            break;
+          case 4:
+            weekdays += 'TH';
+            break;
+          case 5:
+            weekdays += 'FR';
+            break;
+          case 6:
+            weekdays += 'SA';
+            break;
+          case 0:
+            weekdays += 'SU';
+            break;
+          default:
+            weekdays += 'MO';
+            break;
+        }
+      }
+    }
+    output += weekdays;
+
+    output += ";INTERVAL=1";
+
+    if (todo.dueDate != null) {
+      output +=
+          ';UNTIL=${todo.dueDate!.year}${todo.dueDate!.month.toString().padLeft(2, '0')}${todo.dueDate!.day.toString().padLeft(2, '0')}T235959Z';
+    }
+
+    return output;
   }
 
   /// Updated the selected date of calendar, when the months swiped, selects the
@@ -162,6 +224,9 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
       [CalendarDataSource? calendarDataSource,
       ViewChangedCallback? onViewChanged,
       CalendarController? controller]) {
+    /*for (var item in snapshot.data!.docs) {
+      _todos.add(Todo.fromJson(item.data() as Map<String, dynamic>));
+    }*/
     return SfCalendar(
       view: CalendarView.month,
       controller: controller,
@@ -232,23 +297,10 @@ class _MeetingDataSource extends CalendarDataSource {
 /// Custom business object class which contains properties to hold the detailed
 /// information about the event data which will be rendered in calendar.
 class _Meeting {
-  _Meeting(
-      this.eventName,
-      this.organizer,
-      this.contactID,
-      this.capacity,
-      this.from,
-      this.to,
-      this.background,
-      this.isAllDay,
-      this.startTimeZone,
-      this.endTimeZone,
-      this.recurrenceRule);
+  _Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay,
+      this.startTimeZone, this.endTimeZone, this.recurrenceRule);
 
   String eventName;
-  String? organizer;
-  String? contactID;
-  int? capacity;
   DateTime from;
   DateTime to;
   Color background;

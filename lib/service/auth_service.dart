@@ -154,15 +154,14 @@ class AuthService {
   }
 
   // sign out
-  static Future signOut() async {
+  static Future<void> signOut() async {
     try {
-      if (_googleSignIn.isSignedIn() as bool) {
+      await _auth.signOut();
+      if (await _googleSignIn.isSignedIn()) {
         _googleSignIn.signOut();
       }
-      return await _auth.signOut();
     } catch (error) {
       print(error.toString());
-      return null;
     }
   }
 
@@ -189,6 +188,7 @@ class AuthService {
       Fluttertoast.showToast(
         msg: ('Sign In ${user!.uid} with Google'),
       );
+
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {

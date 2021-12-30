@@ -305,13 +305,13 @@ class _AddEditTodoState extends State<AddEditTodo> {
         labelFormatterCallback: (dynamic actualValue, String formattedText) {
           switch (actualValue) {
             case 4:
-              return 'high';
+              return 'Hoch';
             case 3:
-              return 'medium';
+              return 'Mittel';
             case 2:
-              return 'low';
+              return 'Niedrig';
             default:
-              return 'not prioritized';
+              return 'Nicht priorisiert';
           }
         },
         onChanged: (dynamic value) {
