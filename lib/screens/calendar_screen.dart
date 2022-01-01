@@ -11,7 +11,6 @@ import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/loading.dart';
 
 class AgendaViewCalendar extends StatefulWidget {
-  /// Create  default agenda view calendar
   const AgendaViewCalendar({Key? key}) : super(key: key);
 
   @override
@@ -29,7 +28,6 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
   @override
   void initState() {
     _calendarController.selectedDate = DateTime.now();
-    //_events = _MeetingDataSource(_getAppointments());
     super.initState();
   }
 
@@ -48,7 +46,6 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
           if (snapshot.hasError) {
             return const Text(
                 "Etwas ging schief - bitte aktualisiere die Seite");
-            // Fluttertoast.showToast(msg: 'Something went wrong');
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: Text(
@@ -81,15 +78,9 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
         });
   }
 
-  /// Method that creates the collection the data source for calendar, with
-  /// required information.
   _MeetingDataSource _getAppointments(AsyncSnapshot<QuerySnapshot> snapshot) {
-    /// Creates the required appointment subject details as a list.
-    ///
-    ///
     _todos = <Todo>[];
 
-    /// Creates the required appointment color details as a list.
     final List<Color> colorCollection = <Color>[];
     colorCollection.add(const Color(0xFF0F8644));
     colorCollection.add(const Color(0xFF8B1FA9));
@@ -219,14 +210,11 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
     });
   }
 
-  /// Returns the calendar widget based on the properties passed.
   SfCalendar _getAgendaViewCalendar(
       [CalendarDataSource? calendarDataSource,
       ViewChangedCallback? onViewChanged,
       CalendarController? controller]) {
-    /*for (var item in snapshot.data!.docs) {
-      _todos.add(Todo.fromJson(item.data() as Map<String, dynamic>));
-    }*/
+
     return SfCalendar(
       view: CalendarView.month,
       controller: controller,
@@ -235,16 +223,13 @@ class _AgendaViewCalendarState extends State<AgendaViewCalendar> {
       onViewChanged: onViewChanged,
       dataSource: calendarDataSource,
       monthViewSettings: MonthViewSettings(
-          showAgenda: true, numberOfWeeksInView: isWebFullView ? 2 : 6),
+          showAgenda: true, numberOfWeeksInView: isWebFullView ? 6 : 2),
       timeSlotViewSettings: const TimeSlotViewSettings(
           minimumAppointmentDuration: Duration(minutes: 60)),
     );
   }
 }
 
-/// An object to set the appointment collection data source to collection, which
-/// used to map the custom appointment data to the calendar appointment, and
-/// allows to add, remove or reset the appointment collection.
 class _MeetingDataSource extends CalendarDataSource {
   _MeetingDataSource(this.source);
 
@@ -294,8 +279,6 @@ class _MeetingDataSource extends CalendarDataSource {
   }
 }
 
-/// Custom business object class which contains properties to hold the detailed
-/// information about the event data which will be rendered in calendar.
 class _Meeting {
   _Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay,
       this.startTimeZone, this.endTimeZone, this.recurrenceRule);
