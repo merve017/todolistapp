@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/screens/authentication/signin_screen.dart';
 import 'package:todolist_app/screens/add_edit_todo.dart';
-import 'package:todolist_app/screens/calendar.dart';
+import 'package:todolist_app/screens/calendar_screen.dart';
+import 'package:todolist_app/screens/eisenhower_screen.dart';
 import 'package:todolist_app/screens/myprofile_screen.dart';
 import 'package:todolist_app/screens/statistics_screen.dart';
 import 'package:todolist_app/screens/todo_list_screen.dart';
@@ -19,6 +21,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   UserModel loggedInUser = UserModel();
   bool calenderview = false;
+  bool eisenhowerview = false;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +43,17 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.lightBlue[100],
         elevation: 0.0,
         actions: <Widget>[
+          kIsWeb == true
+              ? IconButton(
+                  icon: const Icon(Icons.priority_high_rounded,
+                      color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      eisenhowerview = !eisenhowerview;
+                    });
+                  },
+                )
+              : const Text(''),
           IconButton(
             icon:
                 const Icon(Icons.calendar_today_outlined, color: Colors.white),
@@ -62,8 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body:
-          calenderview == false ? const TodoList() : const AgendaViewCalendar(),
+      body: calenderview == false
+          ? eisenhowerview == false
+              ? const TodoList()
+              : const EisenhowerScreen()
+          : const AgendaViewCalendar(),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
