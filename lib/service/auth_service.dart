@@ -87,6 +87,10 @@ class AuthService {
         case "invalid-email":
           errorMessage = "Your email address appears to be malformed.";
           break;
+        case "email-already-in-use":
+          errorMessage =
+              "The email address is already in use by another account.";
+          break;
         case "wrong-password":
           errorMessage = "Your password is wrong.";
           break;

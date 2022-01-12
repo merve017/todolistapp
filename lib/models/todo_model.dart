@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 @JsonSerializable()
 class Todo {
@@ -23,26 +24,18 @@ class Todo {
   @JsonKey(name: "due_date")
   DateTime? dueDate;
 
-  @JsonKey(name: "routine", defaultValue: false)
-  bool? routine;
-
-  @JsonKey(name: "weekdays")
-  List<bool> weekdays;
-
-  @JsonKey(name: "repetition")
-  int? repetition;
+  @JsonKey(name: "rid", defaultValue: null)
+  String? rid;
 
   Todo(
       {this.uid,
       required this.title,
       this.description,
       required this.priority,
+      this.rid,
       this.status,
-      this.routine,
       this.dueDate,
-      this.doneDate,
-      this.repetition,
-      required this.weekdays});
+      this.doneDate});
 
   factory Todo.fromMap(map) {
     return Todo(
@@ -51,11 +44,9 @@ class Todo {
         description: map['description'],
         priority: map['priority'],
         status: map['status'],
-        routine: map['routine'],
+        rid: map['rid'],
         dueDate: map['due_date'],
-        doneDate: map['doneDate'],
-        weekdays: map['weekdays'],
-        repetition: map['repetition']);
+        doneDate: map['doneDate']);
   }
 
   Map<String, dynamic> toMap() {
@@ -65,32 +56,34 @@ class Todo {
       'status': status,
       'description': description,
       'priority': priority,
-      'routine': routine,
+      'rid': rid,
       'due_date': dueDate,
-      'done_date': doneDate,
-      'weekdays': weekdays,
-      'repetition': repetition,
+      'done_date': doneDate
     };
+  }
+
+  factory Todo.mapAppointmentTodo(Appointment appointment) {
+    return Todo(
+        priority: 0,
+        title: appointment.subject,
+        description: appointment.notes);
   }
 
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
-        uid: json['uid'] as String? ?? '',
-        title: json['title'] as String? ?? '',
-        description: json['description'] as String?,
-        priority: json['priority'] as int? ?? 1,
-        status: json['status'] as bool? ?? false,
-        dueDate: json['due_date'] == null
-            ? null
-            : json['due_date'].toDate() as DateTime?,
-        doneDate: json['done_date'] == null
-            ? null
-            : json['done_date'].toDate() as DateTime?,
-        routine: json['routine'] as bool? ?? false,
-        weekdays: json['weekdays'] == null
-            ? List<bool>.filled(7, false)
-            : (json['weekdays'].cast<bool>()),
-        repetition: json['repetition'] == null ? 0 : json['repetition'] as int);
+      uid: json['uid'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      description: json['description'] as String?,
+      priority: json['priority'] as int? ?? 1,
+      status: json['status'] as bool? ?? false,
+      dueDate: json['due_date'] == null
+          ? null
+          : json['due_date'].toDate() as DateTime?,
+      doneDate: json['done_date'] == null
+          ? null
+          : json['done_date'].toDate() as DateTime?,
+      rid: json['rid'] == null ? '' : json['rid'] as String,
+    );
   }
 
   Map<String, dynamic> toJson(Todo instance) => <String, dynamic>{
@@ -99,17 +92,8 @@ class Todo {
         'status': status,
         'description': description,
         'priority': priority,
-        'routine': routine,
+        'rid': rid,
         'due_date': dueDate,
-        'done_date': doneDate,
-        'weekdays': weekdays,
-        'repetition': repetition
+        'done_date': doneDate
       };
-
-  List<bool> weekdaysfromJson(data) {
-    for (var i = 0; i < 7; i++) {
-      weekdays[i] = data[i] as bool;
-    }
-    return weekdays;
-  }
 }

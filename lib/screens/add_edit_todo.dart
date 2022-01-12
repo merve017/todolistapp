@@ -1,18 +1,25 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/date_symbols.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:todolist_app/models/routine_model.dart';
 import 'package:todolist_app/models/todo_model.dart';
+import 'package:todolist_app/service/routine_service.dart';
 import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/constants.dart';
+import 'package:todolist_app/shared/loading.dart';
 import 'package:todolist_app/shared/validation.dart';
 import 'package:weekday_selector/weekday_selector.dart';
 
 class AddEditTodo extends StatefulWidget {
   final Todo? todo;
+  final RoutineTask? routineTask;
+  final String? rid;
 
-  const AddEditTodo({Key? key, this.todo}) : super(key: key);
+  const AddEditTodo({Key? key, this.todo, this.routineTask, this.rid})
+      : super(key: key);
 
   @override
   _AddEditTodoState createState() => _AddEditTodoState();
@@ -41,15 +48,32 @@ class _AddEditTodoState extends State<AddEditTodo> {
       _status = widget.todo!.status as bool;
       _dueDate =
           widget.todo!.dueDate == null ? null : widget.todo!.dueDate!.toLocal();
-      _routine = widget.todo!.routine as bool;
-      _weekdays = widget.todo!.weekdays;
-      _repetition = Repetition.values[widget.todo!.repetition as int];
+    } else if (widget.routineTask != null) {
+      _title.text = widget.routineTask!.title;
+      _description.text = widget.routineTask!.description as String;
+      _priority = widget.routineTask!.priority as int;
+      _status = widget.routineTask!.status as bool;
+      _dueDate =
+          widget.todo!.dueDate == null ? null : widget.todo!.dueDate!.toLocal();
+      _weekdays = widget.routineTask!.weekdays;
+      _repetition = Repetition.values[widget.routineTask!.repetition as int];
     }
   }
 
   @override
   Widget build(BuildContext context) {
     initializeDateFormatting('de_DE', null);
+    return widget.rid != null
+        ? StreamBuilder<QuerySnapshot>(
+            stream: RoutineService().getRoutineTasks(widget.rid!),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              return loadingScreens(snapshot, "Erledigte To-Do's");
+            })
+        : mainWidget();
+  }
+
+  Widget mainWidget() {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -273,18 +297,55 @@ class _AddEditTodoState extends State<AddEditTodo> {
 
   submit(BuildContext context) {
     if (_formKey.currentState!.validate()) {
-      Todo todo = Todo(
-          title: _title.text,
-          description: _description.text,
-          priority: _priority,
-          status: _status,
-          dueDate: _dueDate,
-          routine: _routine,
-          doneDate: _status == true ? DateTime.now() : null,
-          weekdays: _weekdays,
-          repetition: _repetition.index);
-      if (widget.todo == null) {
-        TodoService().add(todo.toJson(todo));
+      late RoutineTask routineTask;
+      late Todo todo;
+      if (_routine) {
+        routineTask = RoutineTask(
+            rid: RoutineService().getID(),
+            title: _title.text,
+            description: _description.text,
+            priority: _priority,
+            dueDate: _dueDate,
+            doneDate: _status == true ? DateTime.now() : null,
+            weekdays: _weekdays,
+            repetition: _repetition.index);
+      } else {
+        todo = Todo(
+            title: _title.text,
+            description: _description.text,
+            priority: _priority,
+            dueDate: _dueDate,
+            doneDate: _status == true ? DateTime.now() : null);
+      }
+      int m;
+      bool n;
+      if (widget.todo == null && widget.routineTask == null) {
+        if (_routine == true) {
+          RoutineService().add(routineTask.toJson(routineTask));
+
+          for (var i = DateTime.now();
+              i.isBefore(_dueDate!.add(const Duration(days: 1)));
+              i = i.add(const Duration(days: 1))) {
+            m = i.weekday % 7;
+            n = _weekdays[(i.weekday % 7)];
+            print(m);
+            print(n);
+            if (_weekdays[(i.weekday % 7)]) {
+              todo = Todo(
+                  title: _title.text,
+                  description: _description.text,
+                  priority: _priority,
+                  dueDate: i,
+                  status: false,
+                  rid: routineTask.rid,
+                  doneDate: _status == true ? DateTime.now() : null);
+              TodoService().add(todo.toJson(todo));
+            }
+          }
+          if (_repetition == Repetition.weekly) {}
+        } else {
+          TodoService().add(todo.toJson(todo));
+        }
       } else {
         TodoService().updateByID(todo.toJson(todo), widget.todo!.uid as String);
       }
@@ -323,5 +384,34 @@ class _AddEditTodoState extends State<AddEditTodo> {
             }
           });
         });
+  }
+
+  Widget loadingScreens(AsyncSnapshot<QuerySnapshot> snapshot, String title) {
+    const Loading();
+    if (snapshot.hasError) {
+      return const Text("Etwas ging schief - bitte aktualisiere die Seite");
+      // Fluttertoast.showToast(msg: 'Something went wrong');
+    } else if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: Text(
+          "Laden...",
+          style: TextStyle(color: Colors.white),
+        ),
+      );
+    } else {
+      // if (snapshot.hasData && snapshot.data!.size > 0) {
+      RoutineTask routineTask = RoutineTask.fromJson(
+          snapshot.data!.docs[0].data() as Map<String, dynamic>);
+      _title.text = routineTask.title;
+      _description.text = routineTask.description as String;
+      _priority = routineTask.priority as int;
+      _status = routineTask.status as bool;
+      _routine = true;
+      _dueDate =
+          routineTask.dueDate == null ? null : routineTask.dueDate!.toLocal();
+      _weekdays = routineTask.weekdays;
+      _repetition = Repetition.values[routineTask.repetition as int];
+      return mainWidget();
+    }
   }
 }

@@ -85,13 +85,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0"
-  firebase:
-    dependency: "direct main"
-    description:
-      name: firebase
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "9.0.2"
   firebase_auth:
     dependency: "direct main"
     description:
@@ -245,13 +238,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.0+3"
-  http:
-    dependency: transitive
-    description:
-      name: http
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -389,7 +375,7 @@ packages:
       name: syncfusion_flutter_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "19.4.38"
+    version: "19.4.41"
   syncfusion_flutter_datepicker:
     dependency: transitive
     description:
@@ -404,6 +390,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "19.4.38"
+  syncfusion_localizations:
+    dependency: "direct main"
+    description:
+      name: syncfusion_localizations
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "19.4.41"
   term_glyph:
     dependency: transitive
     description:
