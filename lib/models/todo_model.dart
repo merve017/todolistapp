@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 @JsonSerializable()
 class Todo {
@@ -62,13 +61,6 @@ class Todo {
     };
   }
 
-  factory Todo.mapAppointmentTodo(Appointment appointment) {
-    return Todo(
-        priority: 0,
-        title: appointment.subject,
-        description: appointment.notes);
-  }
-
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
       uid: json['uid'] as String? ?? '',
@@ -78,7 +70,9 @@ class Todo {
       status: json['status'] as bool? ?? false,
       dueDate: json['due_date'] == null
           ? null
-          : json['due_date'].toDate() as DateTime?,
+          : json['due_date'].toDate() == DateTime(2000, 1, 1)
+              ? null
+              : json['due_date'].toDate() as DateTime,
       doneDate: json['done_date'] == null
           ? null
           : json['done_date'].toDate() as DateTime?,
@@ -89,11 +83,11 @@ class Todo {
   Map<String, dynamic> toJson(Todo instance) => <String, dynamic>{
         'uid': instance.uid,
         'title': instance.title,
-        'status': status,
+        'status': status ?? false,
         'description': description,
         'priority': priority,
         'rid': rid,
-        'due_date': dueDate,
+        'due_date': dueDate ?? DateTime(2000, 1, 1),
         'done_date': doneDate
       };
 }

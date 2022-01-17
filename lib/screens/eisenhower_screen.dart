@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist_app/models/todo_model.dart';
 import 'package:todolist_app/service/todo_service.dart';
+import 'package:todolist_app/shared/constants.dart';
 import 'package:todolist_app/shared/loading.dart';
 
 class EisenhowerScreen extends StatefulWidget {
@@ -122,7 +123,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
 
   Widget openTodos() {
     return StreamBuilder<QuerySnapshot>(
-        stream: TodoService().getTodoListOfCurrentUserofOpenTodos(),
+        stream: TodoService().getTodoListOfCurrentUserofOpenTodosOfTodayAll(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           return loadingScreen(snapshot);
         });
@@ -143,6 +144,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
     const Loading();
     if (snapshot.hasError) {
+      print(snapshot.error);
       return const Text("Etwas ging schief - bitte aktualisiere die Seite");
       // Fluttertoast.showToast(msg: 'Something went wrong');
     } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -225,7 +227,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         List<dynamic> rejected,
       ) {
         return Container(
-            color: color(priority),
+            color: backgroundColorOpen(priority),
             child: todos.isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
@@ -261,18 +263,5 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
         });
       },
     ));
-  }
-
-  Color? color(priority) {
-    switch (priority) {
-      case 2:
-        return Colors.yellow[50];
-      case 3:
-        return Colors.orange[50];
-      case 4:
-        return Colors.red[50];
-      default:
-        return Colors.grey[50];
-    }
   }
 }

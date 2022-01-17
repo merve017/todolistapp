@@ -15,7 +15,8 @@ part 'widget.dart';
 
 //ignore: must_be_immutable
 class EventCalendar extends StatefulWidget {
-  const EventCalendar({Key? key}) : super(key: key);
+  CalendarView? calendarView;
+  EventCalendar({Key? key, this.calendarView}) : super(key: key);
 
   @override
   EventCalendarState createState() => EventCalendarState();
@@ -26,7 +27,7 @@ late MeetingDataSource _events;
 class EventCalendarState extends State<EventCalendar> {
   EventCalendarState();
 
-  CalendarView _calendarView = CalendarView.month;
+  late CalendarView _calendarView;
   late List<String> eventNameCollection;
   late List<Todo> todos;
   final CalendarController _calendarController = CalendarController();
@@ -34,8 +35,8 @@ class EventCalendarState extends State<EventCalendar> {
 
   @override
   void initState() {
+    _calendarView = widget.calendarView ?? CalendarView.month;
     _calendarController.selectedDate = DateTime.now();
-    _calendarView = CalendarView.month;
     super.initState();
   }
 
@@ -104,26 +105,22 @@ class EventCalendarState extends State<EventCalendar> {
       CalendarDataSource _calendarDataSource,
       CalendarTapCallback calendarTapCallback) {
     return SfCalendar(
-      view: _calendarView,
+      view: widget.calendarView ?? CalendarView.month,
       onViewChanged: onViewChanged,
+      firstDayOfWeek: 1,
       controller: controller,
-      allowViewNavigation: true,
-      allowedViews: const <CalendarView>[
-        CalendarView.month,
-        CalendarView.timelineMonth,
-        CalendarView.schedule,
-      ],
+      allowViewNavigation: false,
       dataSource: _calendarDataSource,
       onTap: calendarTapCallback,
-      scheduleViewSettings: const ScheduleViewSettings(
+      scheduleViewSettings: ScheduleViewSettings(
           hideEmptyScheduleWeek: false,
-          dayHeaderSettings: DayHeaderSettings(
+          dayHeaderSettings: const DayHeaderSettings(
               dayFormat: 'EEEE',
               width: 70,
               dayTextStyle: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w300,
-                color: Colors.red,
+                color: Colors.black,
               ),
               dateTextStyle: TextStyle(
                 fontSize: 20,
@@ -132,7 +129,7 @@ class EventCalendarState extends State<EventCalendar> {
               )),
           weekHeaderSettings: WeekHeaderSettings(
               weekTextStyle: TextStyle(
-                color: Colors.pink,
+                color: Colors.blue[100],
               ),
               startDateFormat: 'MMMM dd, yyyy',
               endDateFormat: 'MMMM dd, yyyy'),
@@ -140,10 +137,10 @@ class EventCalendarState extends State<EventCalendar> {
               monthFormat: 'MMMM, yyyy',
               height: 100,
               textAlign: TextAlign.left,
-              backgroundColor: Colors.lightBlue,
-              monthTextStyle: TextStyle(
+              backgroundColor: Colors.blue[100] ?? Colors.blue,
+              monthTextStyle: const TextStyle(
                   color: Colors.white,
-                  fontSize: 25,
+                  fontSize: 20,
                   fontWeight: FontWeight.w400))),
       showNavigationArrow: true,
       showDatePickerButton: true,
@@ -162,16 +159,16 @@ class EventCalendarState extends State<EventCalendar> {
   void onCalendarTapped(CalendarTapDetails calendarTapDetails) {
     if (calendarTapDetails.targetElement == CalendarElement.calendarCell &&
         calendarTapDetails.targetElement != CalendarElement.appointment) {
-      return;
+      _calendarController.selectedDate = calendarTapDetails.date;
+    } else {
+      setState(() {
+        Navigator.push<Widget>(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const AddEditTodo(),
+            ));
+      });
     }
-
-    setState(() {
-      Navigator.push<Widget>(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) => const AddEditTodo(),
-          ));
-    });
   }
 
   void _onViewChanged(ViewChangedDetails visibleDatesChangedDetails) {

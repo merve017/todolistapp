@@ -54,6 +54,9 @@ dependencies:
   syncfusion_flutter_charts: ^19.4.38
   syncfusion_flutter_calendar: ^19.4.38
   syncfusion_localizations: ^19.4.41
+  google_fonts: ^2.2.0
+  flutter_svg: ^1.0.1
+  flutter_slider_drawer: ^2.0.0
 
 dev_dependencies:
   flutter_test: 
@@ -81,6 +84,9 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
+
+  assets:
+      - assets/images/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

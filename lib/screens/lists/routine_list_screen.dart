@@ -15,23 +15,7 @@ class RoutineList extends StatefulWidget {
 
 class _RoutineListState extends State<RoutineList> {
   bool loading = false;
-  bool _showBackToTopButton = false;
-  late ScrollController _scrollController;
   int selectedExpansionTile = -1;
-  @override
-  void initState() {
-    super.initState();
-    _scrollController = ScrollController()
-      ..addListener(() {
-        setState(() {
-          if (_scrollController.offset >= 400) {
-            _showBackToTopButton = true; // show the back-to-top button
-          } else {
-            _showBackToTopButton = false; // hide the back-to-top button
-          }
-        });
-      });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,23 +150,6 @@ class _RoutineListState extends State<RoutineList> {
                           return toDoTile(context, routineTask, index);
                         }))
           ]);
-    }
-  }
-}
-
-MaterialColor color(RoutineTask routineTask) {
-  if (routineTask.status == true) {
-    return Colors.green;
-  } else {
-    switch (routineTask.priority) {
-      case 2:
-        return Colors.yellow;
-      case 3:
-        return Colors.orange;
-      case 4:
-        return Colors.red;
-      default:
-        return Colors.grey;
     }
   }
 }

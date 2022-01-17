@@ -140,8 +140,11 @@ class _SignInState extends State<SignIn> {
                               }
                               if (result.uid != null && verifiedEmail) {
                                 Fluttertoast.showToast(msg: "Login Successful");
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => const HomeScreen()));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const HomeScreen()));
                               }
                             } on NoSuchMethodError {
                               setState(() {

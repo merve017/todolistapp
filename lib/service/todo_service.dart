@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 import 'package:todolist_app/service/auth_service.dart';
 import 'package:todolist_app/service/database_service.dart';
 
@@ -39,17 +40,50 @@ class TodoService extends DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfToday() {
+  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfTodayLimit5() {
+    final startAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch);
     return getCollectionReference()
         .where("status", isEqualTo: false)
-        .where("dueDate", isNull: true)
+        .where("due_date", isLessThan: startAtTimestamp)
+        .limit(5)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfTodayAll() {
+    final startAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch);
+    return getCollectionReference()
+        .where("status", isEqualTo: false)
+        .where("due_date", isLessThan: startAtTimestamp)
+        .limit(5)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfToday() {
+    final startAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+            .millisecondsSinceEpoch);
+    final endAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime(2000, 1, 1).millisecondsSinceEpoch);
+
+    return getCollectionReference()
+        .where("status", isEqualTo: false)
+        .where("due_date", isLessThan: startAtTimestamp)
+        .where("due_date", isEqualTo: endAtTimestamp)
         .snapshots();
   }
 
   Stream<QuerySnapshot> getTodoListOfCurrentUserofOverdueTodosOfToday() {
+    final startAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime.now().millisecondsSinceEpoch);
+    final endAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
+        DateTime(2000, 1, 1).millisecondsSinceEpoch);
+
     return getCollectionReference()
         .where("status", isEqualTo: false)
-        .where("dueDate", isLessThanOrEqualTo: DateTime.now())
+        .where("due_date", isLessThan: startAtTimestamp)
+        .where("due_date", isNotEqualTo: endAtTimestamp)
         .snapshots();
   }
 

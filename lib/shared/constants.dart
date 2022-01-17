@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:todolist_app/models/todo_model.dart';
+
+import 'loading.dart';
 
 const kHintStyle = TextStyle(
   fontSize: 13,
@@ -82,5 +86,53 @@ extension RepetitionExtension on Repetition {
       default:
         return 'keine Wiederholung';
     }
+  }
+}
+
+const primaryColor = Color(0xFF2697FF);
+const secondaryColor = Color(0xFFB3E5FC);
+const bgColor = Colors.white;
+
+const defaultPadding = 16.0;
+
+MaterialColor color(dynamic task) {
+  if (task.status == true) {
+    return Colors.green;
+  } else {
+    switch (task.priority) {
+      case 2:
+        return Colors.yellow;
+      case 3:
+        return Colors.orange;
+      case 4:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+}
+
+Color? backgroundColorOpen(priority) {
+  switch (priority) {
+    case 2:
+      return Colors.yellow[50];
+    case 3:
+      return Colors.orange[50];
+    case 4:
+      return Colors.red[50];
+    default:
+      return Colors.grey[50];
+  }
+}
+
+Widget? snapshotLoader(AsyncSnapshot<QuerySnapshot> snapshot) {
+  const Loading();
+  if (snapshot.hasError) {
+    return const Text("Etwas ging schief - bitte aktualisiere die Seite");
+    // Fluttertoast.showToast(msg: 'Something went wrong');
+  } else if (snapshot.connectionState == ConnectionState.waiting) {
+    return const Loading();
+  } else {
+    return null;
   }
 }

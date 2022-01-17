@@ -75,53 +75,116 @@ class _AddEditTodoState extends State<AddEditTodo> {
 
   Widget mainWidget() {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.todo != null ? "Edit todo" : "Add Todo"),
-          backgroundColor: Colors.lightBlue[100],
-          elevation: 0.0,
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.check,
-                size: 35,
-              ),
-              color: Colors.greenAccent,
-              onPressed: () => submit(context),
+        child: Scaffold(
+      appBar: AppBar(
+        title: Text(widget.todo != null ? "Edit todo" : "Add Todo"),
+        backgroundColor: Colors.lightBlue[100],
+        elevation: 0.0,
+        actions: [
+          IconButton(
+            icon: const Icon(
+              Icons.check,
+              size: 35,
             ),
-            IconButton(
-              icon: const Icon(
-                Icons.cancel,
-                size: 35,
-              ),
-              color: Colors.redAccent,
-              onPressed: () => Navigator.of(context).pop(),
-            )
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Form(
-              key: _formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    textLabel("Titel:"),
-                    TextFormField(
-                        controller: _title,
-                        textAlign: TextAlign.start,
-                        decoration: textFormFieldDecoration("Titel"),
-                        validator: (value) => validateTitle(value)),
-                    placeHolder,
-                    textLabel("Notizen:"),
-                    TextFormField(
-                      controller: _description,
-                      textAlign: TextAlign.start,
-                      decoration: textFormFieldDecoration("Notizen"),
-                      validator: (value) => validateDescription(value),
+            color: Colors.greenAccent,
+            onPressed: () => submit(context),
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.cancel,
+              size: 35,
+            ),
+            color: Colors.redAccent,
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Form(
+            key: _formKey,
+            child: ListView(
+              shrinkWrap: true,
+              children: <Widget>[
+                ListTile(
+                    contentPadding: const EdgeInsets.fromLTRB(5, 0, 5, 5),
+                    leading: const Text(''),
+                    title: TextFormField(
+                      controller: _title,
+                      validator: (value) => validateTitle(value),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      style: const TextStyle(
+                          fontSize: 25,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w400),
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Titel hinzufügen',
+                      ),
+                    )),
+                const Divider(
+                  height: 1.0,
+                  thickness: 1,
+                ),
+                ListTile(
+                  contentPadding: const EdgeInsets.all(5),
+                  leading: const Icon(
+                    Icons.subject,
+                    color: Colors.black87,
+                  ),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                            controller: _description,
+                            validator: (value) => validateDescription(value),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.black87,
+                                fontWeight: FontWeight.w400),
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Beschreibung hinzufügen',
+                            )),
+                      ),
+                      Checkbox(
+                          value: _status,
+                          onChanged: (value) {
+                            setState(() {
+                              _status = value as bool;
+                            });
+                          }),
+                    ],
+                  ),
+                ),
+                const Divider(
+                  height: 1.0,
+                  thickness: 1,
+                ),
+                ListTile(
+                    contentPadding: const EdgeInsets.all(5),
+                    leading: const Icon(
+                      Icons.priority_high_rounded,
+                      color: Colors.black87,
                     ),
-                    placeHolder,
-                    Row(
+                    title: Container(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: prioritySlider()))),
+                const Divider(
+                  height: 1.0,
+                  thickness: 1,
+                ),
+                ListTile(
+                    contentPadding: const EdgeInsets.all(5),
+                    leading: const Icon(
+                      Icons.repeat_on_rounded,
+                      color: Colors.black87,
+                    ),
+                    title: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       textBaseline: TextBaseline.alphabetic,
@@ -135,33 +198,13 @@ class _AddEditTodoState extends State<AddEditTodo> {
                               });
                             })
                       ],
-                    ),
-                    placeHolder,
-                    textLabel("Prioriät:"),
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: prioritySlider())),
-                    placeHolder,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        textLabel("Status: "),
-                        Checkbox(
-                            value: _status,
-                            onChanged: (value) {
-                              setState(() {
-                                _status = value as bool;
-                              });
-                            })
-                      ],
-                    ),
-                    if (_routine == true) placeHolder,
-                    if (_routine == true)
-                      Row(
+                    )),
+                if (_routine == true) placeHolder,
+                if (_routine == true)
+                  ListTile(
+                      contentPadding: const EdgeInsets.all(5),
+                      leading: const Text(''),
+                      title: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           textBaseline: TextBaseline.alphabetic,
@@ -205,10 +248,12 @@ class _AddEditTodoState extends State<AddEditTodo> {
                                 );
                               }).toList(),
                             ),
-                          ]),
-                    if (_routine == true) placeHolder,
-                    if (_routine == true)
-                      WeekdaySelector(
+                          ])),
+                if (_routine == true) placeHolder,
+                if (_routine == true)
+                  ListTile(
+                      contentPadding: const EdgeInsets.all(5),
+                      title: WeekdaySelector(
                         weekdays: de.STANDALONEWEEKDAYS,
                         shortWeekdays: de.STANDALONENARROWWEEKDAYS,
                         firstDayOfWeek: de.FIRSTDAYOFWEEK + 1,
@@ -219,80 +264,89 @@ class _AddEditTodoState extends State<AddEditTodo> {
                             _weekdays[index] = !_weekdays[index];
                           });
                         },
+                      )),
+                const Divider(
+                  height: 1.0,
+                  thickness: 1,
+                ),
+                placeHolder,
+                ListTile(
+                  contentPadding: const EdgeInsets.all(5),
+                  leading: const Icon(
+                    Icons.calendar_today_outlined,
+                    color: Colors.black87,
+                  ),
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      textLabel(_routine == true
+                          ? "Serie endet am: "
+                          : "Endfällig: "),
+                      ElevatedButton(
+                        child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              const Icon(Icons.calendar_today_outlined),
+                              Text(_dueDate == null
+                                  ? "Select Date"
+                                  : DateFormat('dd.MM.yyyy', 'de_AT')
+                                      .format(_dueDate!))
+                            ]),
+                        onPressed: () async {
+                          final newDate = await showDatePicker(
+                            context: context,
+                            initialDate: _dueDate ?? DateTime.now(),
+                            firstDate: DateTime(DateTime.now().year - 5),
+                            lastDate: DateTime(DateTime.now().year + 5),
+                          );
+
+                          if (newDate != null) {
+                            setState(() => _dueDate = newDate);
+                          }
+                        },
                       ),
-                    placeHolder,
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        textLabel(_routine == true
-                            ? "Serie endet am: "
-                            : "Endfällig: "),
+                      if (_dueDate != null)
                         ElevatedButton(
                           child: Wrap(
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                const Icon(Icons.calendar_today_outlined),
-                                Text(_dueDate == null
-                                    ? "Select Date"
-                                    : DateFormat('dd.MM.yyyy', 'de_AT')
-                                        .format(_dueDate!))
+                                const Icon(Icons.timer),
+                                Text(DateFormat('HH:mm', 'de_AT')
+                                    .format(_dueDate!))
                               ]),
                           onPressed: () async {
-                            final newDate = await showDatePicker(
-                              context: context,
-                              initialDate: _dueDate ?? DateTime.now(),
-                              firstDate: DateTime(DateTime.now().year - 5),
-                              lastDate: DateTime(DateTime.now().year + 5),
-                            );
-
-                            if (newDate != null) {
-                              setState(() => _dueDate = newDate);
+                            final newTime = await showTimePicker(
+                                context: context,
+                                builder: (context, childWidget) {
+                                  return MediaQuery(
+                                      data: MediaQuery.of(context).copyWith(
+                                          alwaysUse24HourFormat: true),
+                                      child: childWidget as Widget);
+                                },
+                                initialTime: TimeOfDay(
+                                    hour: _dueDate!.hour,
+                                    minute: _dueDate!.minute));
+                            if (newTime != null) {
+                              setState(() {
+                                _dueDate = DateTime(
+                                    _dueDate!.year,
+                                    _dueDate!.month,
+                                    _dueDate!.day,
+                                    newTime.hour,
+                                    newTime.minute);
+                              });
                             }
                           },
                         ),
-                        if (_dueDate != null)
-                          ElevatedButton(
-                            child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  const Icon(Icons.timer),
-                                  Text(DateFormat('HH:mm', 'de_AT')
-                                      .format(_dueDate!))
-                                ]),
-                            onPressed: () async {
-                              final newTime = await showTimePicker(
-                                  context: context,
-                                  builder: (context, childWidget) {
-                                    return MediaQuery(
-                                        data: MediaQuery.of(context).copyWith(
-                                            alwaysUse24HourFormat: true),
-                                        child: childWidget as Widget);
-                                  },
-                                  initialTime: TimeOfDay(
-                                      hour: _dueDate!.hour,
-                                      minute: _dueDate!.minute));
-                              if (newTime != null) {
-                                setState(() {
-                                  _dueDate = DateTime(
-                                      _dueDate!.year,
-                                      _dueDate!.month,
-                                      _dueDate!.day,
-                                      newTime.hour,
-                                      newTime.minute);
-                                });
-                              }
-                            },
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
-              )),
-        ),
+                    ],
+                  ),
+                )
+              ],
+            )),
       ),
-    );
+    ));
   }
 
   submit(BuildContext context) {
@@ -314,6 +368,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
             title: _title.text,
             description: _description.text,
             priority: _priority,
+            status: _status,
             dueDate: _dueDate,
             doneDate: _status == true ? DateTime.now() : null);
       }
