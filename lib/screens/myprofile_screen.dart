@@ -69,8 +69,8 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               child: Form(
                 key: _formKey,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     placeHolder,
                     NameField(controller: firstName, name: "Vorname"),
