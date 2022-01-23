@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "todoapp",
+    "public": "web",
     "ignore": [
       "firebase.json",
       "**/.*",
