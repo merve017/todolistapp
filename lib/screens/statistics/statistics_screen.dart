@@ -4,8 +4,8 @@ import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/constants.dart';
 import 'package:todolist_app/shared/loading.dart';
 
-import 'statistics/bar_chart.dart';
-import 'statistics/pie_chart.dart';
+import 'components/bar_chart.dart';
+import 'components/pie_chart.dart';
 
 class StatisticsScreen extends StatefulWidget {
   const StatisticsScreen({Key? key}) : super(key: key);

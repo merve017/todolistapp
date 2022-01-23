@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_localizations/syncfusion_localizations.dart';
-import 'package:todolist_app/screens/authentication/signin_screen.dart';
+import 'package:todolist_app/screens/authentication/authentication_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
@@ -29,6 +29,6 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.lightBlue,
         ),
         debugShowCheckedModeBanner: false,
-        home: const SignIn(),
+        home: const AuthenticationScreen(),
       );
 }

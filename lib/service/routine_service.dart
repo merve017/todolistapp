@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_single_cascade_in_expression_statements
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todolist_app/service/auth_service.dart';
 import 'package:todolist_app/service/database_service.dart';

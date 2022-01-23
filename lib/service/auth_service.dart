@@ -6,7 +6,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:todolist_app/models/user_model.dart';
 
-class AuthService {
+import 'database_service.dart';
+
+class AuthService extends DatabaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static User? user = _auth.currentUser;
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -18,15 +20,34 @@ class AuthService {
     ],
   );
 
-  static UserModel userFromFirebase(User user) {
-    return UserModel(uid: user.uid);
+  @override
+  CollectionReference getCollectionReference() {
+    return DatabaseService.db.collection("users");
+  }
+
+  @override
+  String getID() {
+    return getCollectionReference().doc().id;
+  }
+
+  static Future<UserModel?> userFromFirebase() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    UserModel? userModel;
+    await firebaseFirestore
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      userModel = UserModel.fromJson(value);
+    });
+    return userModel;
   }
 
   static Future signInAnonymous() async {
     try {
       UserCredential result = await _auth.signInAnonymously();
-      User? user = result.user;
-      return userFromFirebase(user!);
+      user = result.user;
+      return userFromFirebase();
     } catch (e) {
       print(e.toString());
       return null;
@@ -65,23 +86,24 @@ class AuthService {
         default:
           errorMessage = "An undefined Error happened.";
       }
-      print(error.code);
       return errorMessage;
     }
   }
 
   // register with email and password
   static Future registerWithEmailAndPassword(
-      String email, String password, String firstname, String lastname) async {
+      UserModel userModel, String password) async {
     String errorMessage = "";
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
-      postDetailsToFirestore(firstname, lastname);
-
+          email: userModel.email!, password: password);
+      userModel.uid = result.user!.uid;
       user = result.user;
+      postDetailsToFirestore(userModel);
+
+      
       // create a new document for the user with the uid
-      return userFromFirebase(user as User);
+      return userFromFirebase();
     } on FirebaseAuthException catch (error) {
       switch (error.code) {
         case "invalid-email":
@@ -113,23 +135,13 @@ class AuthService {
     }
   }
 
-  static void postDetailsToFirestore(String firstname, String lastname) async {
-    // calling our firestore
-    // calling our user model
-    // sedning these values
-
+  static void postDetailsToFirestore(UserModel userModel) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    UserModel userModel = UserModel(uid: user!.uid);
-
-    // writing all the values
-    userModel.email = user!.email;
-    userModel.firstName = firstname;
-    userModel.lastName = lastname;
-
     await firebaseFirestore
         .collection("users")
         .doc(user!.uid)
-        .set(userModel.toMap());
+        .set(userModel.toJson(userModel));
+    user!.updateDisplayName(userModel.firstName);
     Fluttertoast.showToast(msg: "Account created successfully :) ");
   }
 

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:todolist_app/screens/statistics/bar_chart.dart';
-import 'package:todolist_app/screens/statistics/pie_chart.dart';
+import 'package:todolist_app/screens/statistics/components/bar_chart.dart';
+import 'package:todolist_app/screens/statistics/components/pie_chart.dart';
 import 'package:todolist_app/service/todo_service.dart';
 
 import 'package:todolist_app/shared/constants.dart';

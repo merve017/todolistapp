@@ -374,35 +374,38 @@ class _AddEditTodoState extends State<AddEditTodo> {
       }
       int m;
       bool n;
-      if (widget.todo == null && widget.routineTask == null) {
-        if (_routine == true) {
-          RoutineService().add(routineTask.toJson(routineTask));
-
-          for (var i = DateTime.now();
-              i.isBefore(_dueDate!.add(const Duration(days: 1)));
-              i = i.add(const Duration(days: 1))) {
-            m = i.weekday % 7;
-            n = _weekdays[(i.weekday % 7)];
-            print(m);
-            print(n);
-            if (_weekdays[(i.weekday % 7)]) {
-              todo = Todo(
-                  title: _title.text,
-                  description: _description.text,
-                  priority: _priority,
-                  dueDate: i,
-                  status: false,
-                  rid: routineTask.rid,
-                  doneDate: _status == true ? DateTime.now() : null);
-              TodoService().add(todo.toJson(todo));
-            }
-          }
-          if (_repetition == Repetition.weekly) {}
-        } else {
-          TodoService().add(todo.toJson(todo));
-        }
-      } else {
+      if (widget.todo != null) {
         TodoService().updateByID(todo.toJson(todo), widget.todo!.uid as String);
+      } else if (widget.todo == null && !_routine) {
+        TodoService().add(todo.toJson(todo));
+      } else {
+        if (widget.routineTask != null) {
+          TodoService().deleteByRID(widget.rid!);
+        }
+        if (widget.routineTask == null) {
+          RoutineService().add(routineTask.toJson(routineTask));
+        }
+        _dueDate ??= DateTime.now().add(const Duration(days: 366));
+        for (var i = DateTime.now();
+            i.isBefore(_dueDate!.add(const Duration(days: 1)));
+            i = i.add(const Duration(days: 1))) {
+          m = i.weekday % 7;
+          n = _weekdays[(i.weekday % 7)];
+          print(m);
+          print(n);
+          if (_weekdays[(i.weekday % 7)]) {
+            todo = Todo(
+                title: _title.text,
+                description: _description.text,
+                priority: _priority,
+                dueDate: i,
+                status: false,
+                rid: routineTask.rid,
+                doneDate: _status == true ? DateTime.now() : null);
+            TodoService().add(todo.toJson(todo));
+          }
+        }
+        if (_repetition == Repetition.weekly) {}
       }
       Navigator.pop(context);
     }

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:todolist_app/service/auth_service.dart';
 import 'package:todolist_app/service/database_service.dart';
 
@@ -116,4 +115,16 @@ class TodoService extends DatabaseService {
             });
           }
         }*/
+
+  deleteByRID(String rid) async {
+    getCollectionReference()
+        .where("rid", isEqualTo: rid)
+        .where("due_date", isGreaterThanOrEqualTo: DateTime.now())
+        .get()
+        .then((snapshot) {
+      for (DocumentSnapshot doc in snapshot.docs) {
+        doc.reference.delete();
+      }
+    });
+  }
 }

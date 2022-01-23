@@ -2,9 +2,10 @@ library homescreen;
 
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:todolist_app/models/user_model.dart';
+import 'package:todolist_app/screens/authentication/authentication_screen.dart';
 import 'package:todolist_app/shared/constants.dart';
 import 'dashboard/dashboard_screen.dart';
-import 'package:todolist_app/screens/authentication/signin_screen.dart';
+import 'package:todolist_app/screens/authentication/components/signin.dart';
 import 'package:todolist_app/screens/add_edit_todo.dart';
 import 'package:todolist_app/screens/eisenhower_screen.dart';
 
@@ -16,7 +17,7 @@ import 'calendar/calendar_screen.dart';
 import 'lists/actual_todo_list_screen.dart';
 import 'myprofile_screen.dart';
 import 'lists/routine_list_screen.dart';
-import 'statistics_screen.dart';
+import 'statistics/statistics_screen.dart';
 import 'lists/todo_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -198,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const SignIn(),
+                  builder: (context) => const AuthenticationScreen(),
                 ),
                 (Route<dynamic> route) => false,
               );

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:todolist_app/screens/authentication/signin_screen.dart';
+import 'package:todolist_app/screens/authentication/authentication_screen.dart';
 import 'package:todolist_app/service/auth_service.dart';
+import 'package:todolist_app/shared/constants.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({Key? key}) : super(key: key);
@@ -14,16 +15,13 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   late Timer _timer;
 
-  /*@override
-  void initState() {
-    super.initState();*/
   _EmailVerificationScreenState() {
     _timer = Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => const SignIn(),
-              settings: const RouteSettings(name: '/signin')));
+            builder: (context) => const AuthenticationScreen(),
+          ));
     });
   }
 
@@ -43,35 +41,29 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return const SignIn();
+                  return const AuthenticationScreen();
                 },
               ),
             );
           },
         ),
         builder: (context, snapshot) {
-          return Scaffold(
-            body: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                        text: "An email has been sent to the address ",
-                        children: [
-                          TextSpan(
-                            text: "${AuthService.user!.email}",
-                            style:
-                                const TextStyle(color: Colors.lightBlueAccent),
-                          ),
-                          const TextSpan(
-                              text: " please click on the link to verify it."),
-                        ]),
-                  )
-                ],
+          return Container(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView(shrinkWrap: true, children: [
+              placeHolder,
+              const ListTile(
+                  title: Text(
+                      "Eine E-Mail wurde an die angegebene Adresse geschickt:  ")),
+              placeHolder,
+              ListTile(
+                title: Text("${AuthService.user!.email}",
+                    style: const TextStyle(color: Colors.lightBlueAccent)),
               ),
-            ),
+              const ListTile(
+                  title: Text(
+                      "Klicke den Link in der E-Mail um dich zu verifizieren.")),
+            ]),
           );
         });
   }

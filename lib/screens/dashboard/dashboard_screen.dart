@@ -1,11 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist_app/service/auth_service.dart';
 
 import 'package:todolist_app/shared/constants.dart';
 
-import 'components/todo_infos.dart';
 import 'components/quotes.dart';
 import 'components/actual_todos_info.dart';
 import 'components/statistics_info.dart';
@@ -22,8 +21,7 @@ class DashboardScreen extends StatelessWidget {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                  'Hello ${AuthService.userFromFirebase(AuthService.user as User).firstName ?? AuthService.user!.displayName}',
+              child: Text('Hello ${AuthService.user?.displayName ?? ""}!',
                   style: Theme.of(context).textTheme.headline6,
                   textAlign: TextAlign.left),
             ),
