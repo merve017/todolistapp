@@ -24,34 +24,6 @@ class Quotes extends StatelessWidget {
     );
   }
 
-  Future<Quote> fetchAlbumPaperQuotes() async {
-    //http.Request request= http.Request("GET", Uri.parse("https://api.paperquotes.com/apiv1/quotes/?lang=de"));
-    //request.headers.addEnies('Authorization', 'Token f4d8d9ef90402395cdb6f53047cba65dc17b9316');
-
-    final response = await http.get(
-      Uri.parse('https://api.paperquotes.com/apiv1/quotes/?lang=en'),
-      // Send authorization headers to the backend.
-      headers: {
-        HttpHeaders.authorizationHeader:
-            'Token f4d8d9ef90402395cdb6f53047cba65dc17b9316',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      final json = jsonDecode(response.body);
-      final jsonresult = json['results'];
-      print(json['results']);
-      print(jsonresult[0]['quote']);
-      return Quote.fromJson(json['results'][0]);
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
-  }
-
   Future<Quote> fetchAlbum() async {
     final response = await http.get(
       Uri.parse('https://type.fit/api/quotes'),
