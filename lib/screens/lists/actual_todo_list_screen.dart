@@ -29,13 +29,22 @@ class _ActualTodoList extends State<ActualTodoList> {
           ]),
       ExpansionTile(
           title: const Text("Überfällige To-Do's"),
-          initiallyExpanded: true,
+          initiallyExpanded: false,
           children: [
             ListStreamBuilder(
                 query: TodoService()
                     .getTodoListOfCurrentUserofOverdueTodosOfToday())
             //,site: 'OVERDUELIST')
-          ])
+          ]),
+      ExpansionTile(
+          title: const Text("Geschlossene To-Do's"),
+          initiallyExpanded: false,
+          children: [
+            ListStreamBuilder(
+                query: TodoService()
+                    .getTodoListOfCurrentUserofClosedTodosOfToday())
+            //,site: 'CLOSED')
+          ]),
     ]);
   }
 

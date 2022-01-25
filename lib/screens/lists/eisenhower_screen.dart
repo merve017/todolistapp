@@ -144,7 +144,7 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     }
     const Loading();
     if (snapshot.hasError) {
-      print(snapshot.error);
+      //print(snapshot.error);
       return const Text("Etwas ging schief - bitte aktualisiere die Seite");
       // Fluttertoast.showToast(msg: 'Something went wrong');
     } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,19 +173,39 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
     prioNothing.clear();
     for (var item in snapshot.data!.docs) {
       Todo todo = Todo.fromJson(item.data() as Map<String, dynamic>);
-      switch (todo.priority) {
-        case 4:
-          prioHigh.add(todo);
-          break;
-        case 3:
-          prioMiddle.add(todo);
-          break;
-        case 2:
-          prioLow.add(todo);
-          break;
-        default:
-          prioNothing.add(todo);
-          break;
+      if (todo.dueDate != null) {
+        if (todo.dueDate!.isAtSameMomentAs(DateTime(
+            DateTime.now().year, DateTime.now().month, DateTime.now().day))) {
+          switch (todo.priority) {
+            case 4:
+              prioHigh.add(todo);
+              break;
+            case 3:
+              prioHigh.add(todo);
+              break;
+            case 2:
+              prioLow.add(todo);
+              break;
+            default:
+              prioLow.add(todo);
+              break;
+          }
+        }
+      } else {
+        switch (todo.priority) {
+          case 4:
+            prioMiddle.add(todo);
+            break;
+          case 3:
+            prioMiddle.add(todo);
+            break;
+          case 2:
+            prioNothing.add(todo);
+            break;
+          default:
+            prioNothing.add(todo);
+            break;
+        }
       }
     }
   }

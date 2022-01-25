@@ -95,19 +95,25 @@ const bgColor = Colors.white;
 const defaultPadding = 16.0;
 
 MaterialColor color(dynamic task) {
-  if (task.status == true) {
-    return Colors.green;
-  } else {
-    switch (task.priority) {
-      case 2:
-        return Colors.yellow;
-      case 3:
-        return Colors.orange;
-      case 4:
-        return Colors.red;
-      default:
-        return Colors.grey;
+  try {
+    if (task.status == true) {
+      return Colors.green;
     }
+  } catch (e) {
+    if (task.dueDate.isBefore(DateTime.now())) {
+      return Colors.green;
+    }
+  }
+
+  switch (task.priority) {
+    case 2:
+      return Colors.yellow;
+    case 3:
+      return Colors.orange;
+    case 4:
+      return Colors.red;
+    default:
+      return Colors.grey;
   }
 }
 

@@ -32,13 +32,6 @@ class TodoService extends DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfFuture() {
-    return getCollectionReference()
-        .where("status", isEqualTo: false)
-        .where("dueDate", isGreaterThan: DateTime.now())
-        .snapshots();
-  }
-
   Stream<QuerySnapshot> getTodoListOfCurrentUserofOpenTodosOfTodayLimit5() {
     final startAtTimestamp = Timestamp.fromMillisecondsSinceEpoch(
         DateTime.now().add(const Duration(days: 1)).millisecondsSinceEpoch);
@@ -89,7 +82,9 @@ class TodoService extends DatabaseService {
   Stream<QuerySnapshot> getTodoListOfCurrentUserofClosedTodosOfToday() {
     return getCollectionReference()
         .where("status", isEqualTo: true)
-        .where("doneDate", isEqualTo: DateTime.now())
+        .where("done_date",
+            isEqualTo: DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day))
         .snapshots();
   }
 

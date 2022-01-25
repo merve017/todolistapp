@@ -7,10 +7,10 @@ class ColumnDefault extends StatelessWidget {
   ColumnDefault({Key? key, required this.snapshot}) : super(key: key);
 
   final AsyncSnapshot<QuerySnapshot> snapshot;
-  int high = 0;
-  int medium = 0;
-  int low = 0;
-  int notprioritized = 0;
+  late int high = 0;
+  late int medium = 0;
+  late int low = 0;
+  late int notprioritized = 0;
 
   final TooltipBehavior? _tooltipBehavior =
       TooltipBehavior(enable: true, header: '', canShowMarker: false);

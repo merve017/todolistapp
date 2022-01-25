@@ -14,11 +14,8 @@ class RoutineTask {
   @JsonKey(name: "priority", defaultValue: 1)
   int? priority;
 
-  @JsonKey(name: "status", defaultValue: false)
-  bool? status;
-
-  @JsonKey(name: "done_date")
-  DateTime? doneDate;
+  @JsonKey(name: "start_date")
+  DateTime? startDate;
 
   @JsonKey(name: "due_date")
   DateTime? dueDate;
@@ -34,9 +31,8 @@ class RoutineTask {
       required this.title,
       this.description,
       required this.priority,
-      this.status,
       this.dueDate,
-      this.doneDate,
+      this.startDate,
       this.repetition,
       required this.weekdays});
 
@@ -46,9 +42,8 @@ class RoutineTask {
         title: map['todo_Title'],
         description: map['description'],
         priority: map['priority'],
-        status: map['status'],
         dueDate: map['due_date'],
-        doneDate: map['doneDate'],
+        startDate: map['startDate'],
         weekdays: map['weekdays'],
         repetition: map['repetition']);
   }
@@ -57,11 +52,10 @@ class RoutineTask {
     return {
       'rid': rid,
       'todoTitle': title,
-      'status': status,
       'description': description,
       'priority': priority,
       'due_date': dueDate,
-      'done_date': doneDate,
+      'startDate': startDate,
       'weekdays': weekdays,
       'repetition': repetition,
     };
@@ -73,13 +67,12 @@ class RoutineTask {
         title: json['title'] as String? ?? '',
         description: json['description'] as String?,
         priority: json['priority'] as int? ?? 1,
-        status: json['status'] as bool? ?? false,
         dueDate: json['due_date'] == null
             ? null
             : json['due_date'].toDate() as DateTime?,
-        doneDate: json['done_date'] == null
+        startDate: json['start_date'] == null
             ? null
-            : json['done_date'].toDate() as DateTime?,
+            : json['start_date'].toDate() as DateTime?,
         weekdays: json['weekdays'] == null
             ? List<bool>.filled(7, false)
             : (json['weekdays'].cast<bool>()),
@@ -89,11 +82,10 @@ class RoutineTask {
   Map<String, dynamic> toJson(RoutineTask instance) => <String, dynamic>{
         'rid': instance.rid,
         'title': instance.title,
-        'status': status,
         'description': description,
         'priority': priority,
         'due_date': dueDate,
-        'done_date': doneDate,
+        'start_date': startDate,
         'weekdays': weekdays,
         'repetition': repetition
       };

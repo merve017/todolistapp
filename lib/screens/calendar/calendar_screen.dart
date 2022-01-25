@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:todolist_app/models/todo_model.dart';
-import 'package:todolist_app/screens/add_edit_todo.dart';
+import 'package:todolist_app/screens/add_edit_todo/add_edit_todo.dart';
 import 'package:todolist_app/service/todo_service.dart';
 import 'package:todolist_app/shared/loading.dart';
 
@@ -104,8 +104,9 @@ class EventCalendarState extends State<EventCalendar> {
       CalendarController? controller,
       CalendarDataSource _calendarDataSource,
       CalendarTapCallback calendarTapCallback) {
+    controller!.view = (widget.calendarView ?? CalendarView.month);
     return SfCalendar(
-      view: widget.calendarView ?? CalendarView.month,
+      //view: widget.calendarView ?? CalendarView.month,
       onViewChanged: onViewChanged,
       firstDayOfWeek: 1,
       controller: controller,
@@ -165,7 +166,9 @@ class EventCalendarState extends State<EventCalendar> {
         Navigator.push<Widget>(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const AddEditTodo(),
+              builder: (BuildContext context) => AddEditTodo(
+                  startDate: _calendarController.selectedDate,
+                  dueDate: _calendarController.selectedDate),
             ));
       });
     }
@@ -209,6 +212,18 @@ class EventCalendarState extends State<EventCalendar> {
             title: Text(meeting.title),
             tileColor: colorCollection(),
             leading: const Icon(Icons.done),
+            trailing: Checkbox(
+                value: meeting.status,
+                onChanged: (value) {
+                  meeting.status = value;
+                  meeting.doneDate = meeting.status == true
+                      ? DateTime(DateTime.now().year, DateTime.now().month,
+                          DateTime.now().day)
+                      : null;
+                  TodoService().updateByID(
+                      meeting.toJson(meeting), meeting.uid as String);
+                  (context as Element).markNeedsBuild();
+                }),
             onTap: () {
               setState(() {
                 Navigator.push<Widget>(
@@ -223,8 +238,19 @@ class EventCalendarState extends State<EventCalendar> {
         : PopupMenuButton(
             child: (ListTile(
                 title: Text(meeting.title),
-                leading: const Icon(Icons.done),
-                trailing: const Icon(Icons.repeat_rounded))),
+                leading: const Icon(Icons.repeat_rounded),
+                trailing: Checkbox(
+                    value: meeting.status,
+                    onChanged: (value) {
+                      meeting.status = value;
+                      meeting.doneDate = meeting.status == true
+                          ? DateTime(DateTime.now().year, DateTime.now().month,
+                              DateTime.now().day)
+                          : null;
+                      TodoService().updateByID(
+                          meeting.toJson(meeting), meeting.uid as String);
+                      (context as Element).markNeedsBuild();
+                    }))),
             onSelected: (x) {
               if (x == 0) {
                 setState(() {

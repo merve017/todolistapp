@@ -1,4 +1,3 @@
-import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:todolist_app/service/auth_service.dart';
@@ -16,6 +15,7 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
+        controller: ScrollController(),
         padding: const EdgeInsets.all(defaultPadding),
         child: Column(
           children: [

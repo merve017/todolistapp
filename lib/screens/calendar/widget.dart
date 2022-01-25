@@ -2,7 +2,6 @@ part of event_calendar;
 
 MeetingDataSource getAppointments(dynamic snapshot) {
   final List<Todo> todos = <Todo>[];
-  final Random random = Random();
   for (var item in snapshot.data!.docs) {
     Todo todo = Todo.fromJson(item.data());
     todos.add(todo);
@@ -99,19 +98,18 @@ class MeetingDataSource extends CalendarDataSource<Todo> {
   @override
   List<Todo> get appointments => source;
 
-  @override
   String id(int index) {
     return source[index].uid ?? '';
   }
 
   @override
   DateTime getStartTime(int index) {
-    return source[index].dueDate ?? DateTime.now();
+    return getDate(source[index].doneDate, source[index].dueDate);
   }
 
   @override
   DateTime getEndTime(int index) {
-    return source[index].dueDate ?? DateTime.now();
+    return getDate(source[index].doneDate, source[index].dueDate);
   }
 
   @override

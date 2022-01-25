@@ -11,7 +11,7 @@ import 'database_service.dart';
 class AuthService extends DatabaseService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static User? user = _auth.currentUser;
-  static final GoogleSignIn _googleSignIn = GoogleSignIn(
+  static final GoogleSignIn googleSignIn = GoogleSignIn(
     clientId:
         '556311770094-r3fip0prjd35s11evud3ioch7lr5k1s0.apps.googleusercontent.com',
     scopes: <String>[
@@ -27,7 +27,11 @@ class AuthService extends DatabaseService {
 
   @override
   String getID() {
-    return getCollectionReference().doc().id;
+    return user!.uid;
+  }
+
+  Stream<DocumentSnapshot<Object?>>? userFromFirebaseStream() {
+    return getCollectionReference().doc(user!.uid).snapshots();
   }
 
   static Future<UserModel?> userFromFirebase() async {
@@ -49,7 +53,7 @@ class AuthService extends DatabaseService {
       user = result.user;
       return userFromFirebase();
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       return null;
     }
   }
@@ -101,7 +105,6 @@ class AuthService extends DatabaseService {
       user = result.user;
       postDetailsToFirestore(userModel);
 
-      
       // create a new document for the user with the uid
       return userFromFirebase();
     } on FirebaseAuthException catch (error) {
@@ -173,11 +176,12 @@ class AuthService extends DatabaseService {
   static Future<void> signOut() async {
     try {
       await _auth.signOut();
-      if (await _googleSignIn.isSignedIn()) {
-        _googleSignIn.signOut();
+      user = null;
+      if (await googleSignIn.isSignedIn()) {
+        googleSignIn.signOut();
       }
     } catch (error) {
-      print(error.toString());
+      //print(error.toString());
     }
   }
 
@@ -189,7 +193,7 @@ class AuthService extends DatabaseService {
         var googleProvider = GoogleAuthProvider();
         userCredential = await _auth.signInWithPopup(googleProvider);
       } else {
-        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
         final GoogleSignInAuthentication googleAuth =
             await googleUser!.authentication;
         final AuthCredential googleAuthCredential =
@@ -213,7 +217,7 @@ class AuthService extends DatabaseService {
         // ...
       }
     } catch (e) {
-      print(e);
+      //print(e);
       Fluttertoast.showToast(
         msg: ('Failed to sign in with Google: $e'),
       );

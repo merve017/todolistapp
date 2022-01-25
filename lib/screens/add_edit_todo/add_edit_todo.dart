@@ -17,8 +17,16 @@ class AddEditTodo extends StatefulWidget {
   final Todo? todo;
   final RoutineTask? routineTask;
   final String? rid;
+  final DateTime? dueDate;
+  final DateTime? startDate;
 
-  const AddEditTodo({Key? key, this.todo, this.routineTask, this.rid})
+  const AddEditTodo(
+      {Key? key,
+      this.todo,
+      this.routineTask,
+      this.rid,
+      this.dueDate,
+      this.startDate})
       : super(key: key);
 
   @override
@@ -33,9 +41,11 @@ class _AddEditTodoState extends State<AddEditTodo> {
   bool _status = false;
   bool _routine = false;
   DateTime? _dueDate; //= DateTime.now();
+  DateTime? _startDate;
+  DateTime? _doneDate;
   List<bool> _weekdays = List<bool>.filled(7, false);
   final DateSymbols de = dateTimeSymbolMap()['de'];
-  Repetition _repetition = Repetition.none;
+  Repetition _repetition = Repetition.yearly;
 
   @override
   void initState() {
@@ -46,17 +56,22 @@ class _AddEditTodoState extends State<AddEditTodo> {
       _description.text = widget.todo!.description as String;
       _priority = widget.todo!.priority as int;
       _status = widget.todo!.status as bool;
+      _doneDate = widget.todo!.doneDate;
       _dueDate =
           widget.todo!.dueDate == null ? null : widget.todo!.dueDate!.toLocal();
     } else if (widget.routineTask != null) {
       _title.text = widget.routineTask!.title;
       _description.text = widget.routineTask!.description as String;
       _priority = widget.routineTask!.priority as int;
-      _status = widget.routineTask!.status as bool;
-      _dueDate =
-          widget.todo!.dueDate == null ? null : widget.todo!.dueDate!.toLocal();
+      _startDate = widget.routineTask!.startDate == null
+          ? null
+          : widget.routineTask!.startDate!.toLocal();
+      _dueDate = widget.routineTask!.dueDate == null
+          ? null
+          : widget.routineTask!.dueDate!.toLocal();
       _weekdays = widget.routineTask!.weekdays;
       _repetition = Repetition.values[widget.routineTask!.repetition as int];
+      _routine = true;
     }
   }
 
@@ -103,6 +118,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
         child: Form(
             key: _formKey,
             child: ListView(
+              controller: ScrollController(),
               shrinkWrap: true,
               children: <Widget>[
                 ListTile(
@@ -149,13 +165,15 @@ class _AddEditTodoState extends State<AddEditTodo> {
                               hintText: 'Beschreibung hinzufügen',
                             )),
                       ),
-                      Checkbox(
-                          value: _status,
-                          onChanged: (value) {
-                            setState(() {
-                              _status = value as bool;
-                            });
-                          }),
+                      if (_routine != true) ...[
+                        Checkbox(
+                            value: _status,
+                            onChanged: (value) {
+                              setState(() {
+                                _status = value as bool;
+                              });
+                            }),
+                      ],
                     ],
                   ),
                 ),
@@ -199,8 +217,8 @@ class _AddEditTodoState extends State<AddEditTodo> {
                             })
                       ],
                     )),
-                if (_routine == true) placeHolder,
-                if (_routine == true)
+                if (_routine == true) ...[
+                  placeHolder,
                   ListTile(
                       contentPadding: const EdgeInsets.all(5),
                       leading: const Text(''),
@@ -231,13 +249,10 @@ class _AddEditTodoState extends State<AddEditTodo> {
                                     case 'Jährlich':
                                       _repetition = Repetition.yearly;
                                       break;
-                                    default:
-                                      _repetition = Repetition.none;
                                   }
                                 });
                               },
                               items: <String>[
-                                Repetition.none.name,
                                 Repetition.weekly.name,
                                 Repetition.monthly.name,
                                 Repetition.yearly.name,
@@ -249,26 +264,28 @@ class _AddEditTodoState extends State<AddEditTodo> {
                               }).toList(),
                             ),
                           ])),
-                if (_routine == true) placeHolder,
-                if (_routine == true)
-                  ListTile(
-                      contentPadding: const EdgeInsets.all(5),
-                      title: WeekdaySelector(
-                        weekdays: de.STANDALONEWEEKDAYS,
-                        shortWeekdays: de.STANDALONENARROWWEEKDAYS,
-                        firstDayOfWeek: de.FIRSTDAYOFWEEK + 1,
-                        values: _weekdays,
-                        onChanged: (int day) {
-                          setState(() {
-                            final index = day % 7;
-                            _weekdays[index] = !_weekdays[index];
-                          });
-                        },
-                      )),
-                const Divider(
-                  height: 1.0,
-                  thickness: 1,
-                ),
+                  placeHolder,
+                  if (_repetition.index == Repetition.weekly.index) ...[
+                    ListTile(
+                        contentPadding: const EdgeInsets.all(5),
+                        title: WeekdaySelector(
+                          weekdays: de.STANDALONEWEEKDAYS,
+                          shortWeekdays: de.STANDALONENARROWWEEKDAYS,
+                          firstDayOfWeek: de.FIRSTDAYOFWEEK + 1,
+                          values: _weekdays,
+                          onChanged: (int day) {
+                            setState(() {
+                              final index = day % 7;
+                              _weekdays[index] = !_weekdays[index];
+                            });
+                          },
+                        ))
+                  ],
+                  const Divider(
+                    height: 1.0,
+                    thickness: 1,
+                  ),
+                ],
                 placeHolder,
                 ListTile(
                   contentPadding: const EdgeInsets.all(5),
@@ -281,6 +298,32 @@ class _AddEditTodoState extends State<AddEditTodo> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     textBaseline: TextBaseline.alphabetic,
                     children: [
+                      if (_routine == true) ...[
+                        textLabel("Start am: "),
+                        ElevatedButton(
+                          child: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                const Icon(Icons.calendar_today_outlined),
+                                Text(_startDate == null
+                                    ? "Select Date"
+                                    : DateFormat('dd.MM.yyyy', 'de_AT')
+                                        .format(_startDate!))
+                              ]),
+                          onPressed: () async {
+                            final newDate = await showDatePicker(
+                              context: context,
+                              initialDate: _startDate ?? DateTime.now(),
+                              firstDate: DateTime(DateTime.now().year - 5),
+                              lastDate: DateTime(DateTime.now().year + 5),
+                            );
+
+                            if (newDate != null) {
+                              setState(() => _startDate = newDate);
+                            }
+                          },
+                        )
+                      ],
                       textLabel(_routine == true
                           ? "Serie endet am: "
                           : "Endfällig: "),
@@ -307,39 +350,6 @@ class _AddEditTodoState extends State<AddEditTodo> {
                           }
                         },
                       ),
-                      if (_dueDate != null)
-                        ElevatedButton(
-                          child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              children: [
-                                const Icon(Icons.timer),
-                                Text(DateFormat('HH:mm', 'de_AT')
-                                    .format(_dueDate!))
-                              ]),
-                          onPressed: () async {
-                            final newTime = await showTimePicker(
-                                context: context,
-                                builder: (context, childWidget) {
-                                  return MediaQuery(
-                                      data: MediaQuery.of(context).copyWith(
-                                          alwaysUse24HourFormat: true),
-                                      child: childWidget as Widget);
-                                },
-                                initialTime: TimeOfDay(
-                                    hour: _dueDate!.hour,
-                                    minute: _dueDate!.minute));
-                            if (newTime != null) {
-                              setState(() {
-                                _dueDate = DateTime(
-                                    _dueDate!.year,
-                                    _dueDate!.month,
-                                    _dueDate!.day,
-                                    newTime.hour,
-                                    newTime.minute);
-                              });
-                            }
-                          },
-                        ),
                     ],
                   ),
                 )
@@ -360,7 +370,7 @@ class _AddEditTodoState extends State<AddEditTodo> {
             description: _description.text,
             priority: _priority,
             dueDate: _dueDate,
-            doneDate: _status == true ? DateTime.now() : null,
+            startDate: _startDate ?? DateTime.now(),
             weekdays: _weekdays,
             repetition: _repetition.index);
       } else {
@@ -370,10 +380,10 @@ class _AddEditTodoState extends State<AddEditTodo> {
             priority: _priority,
             status: _status,
             dueDate: _dueDate,
-            doneDate: _status == true ? DateTime.now() : null);
+            doneDate: _doneDate ?? (_status == true ? DateTime.now() : null));
       }
-      int m;
-      bool n;
+      //int m;
+      //bool n;
       if (widget.todo != null) {
         TodoService().updateByID(todo.toJson(todo), widget.todo!.uid as String);
       } else if (widget.todo == null && !_routine) {
@@ -386,14 +396,38 @@ class _AddEditTodoState extends State<AddEditTodo> {
           RoutineService().add(routineTask.toJson(routineTask));
         }
         _dueDate ??= DateTime.now().add(const Duration(days: 366));
-        for (var i = DateTime.now();
-            i.isBefore(_dueDate!.add(const Duration(days: 1)));
-            i = i.add(const Duration(days: 1))) {
-          m = i.weekday % 7;
-          n = _weekdays[(i.weekday % 7)];
-          print(m);
-          print(n);
-          if (_weekdays[(i.weekday % 7)]) {
+        if (_repetition.index == Repetition.yearly.index) {
+          todo = Todo(
+              title: _title.text,
+              description: _description.text,
+              priority: _priority,
+              dueDate: DateTime.now().add(const Duration(days: 365)),
+              status: false,
+              rid: routineTask.rid,
+              doneDate: _status == true ? DateTime.now() : null);
+          TodoService().add(todo.toJson(todo));
+        } else if (_repetition.index == Repetition.monthly.index) {
+          int year = routineTask.startDate!.year;
+          int month = routineTask.startDate!.month;
+          int day = routineTask.startDate!.day;
+          for (var i = _startDate ?? DateTime.now();
+              i.isBefore(_dueDate!);
+              i = DateTime(year, month, day)) {
+            year = i.year;
+            month = i.month + 1;
+            day = i.day;
+            if ((month) > 12) {
+              year = DateTime.now().year + 1;
+              month = 1;
+            }
+            if (_startDate!.day == 31 &&
+                ((month < 7 && month.isEven) || (month > 8 && month.isOdd))) {
+              if (month == 2) {
+                day = 28;
+              }
+              day = 30;
+            }
+
             todo = Todo(
                 title: _title.text,
                 description: _description.text,
@@ -401,11 +435,32 @@ class _AddEditTodoState extends State<AddEditTodo> {
                 dueDate: i,
                 status: false,
                 rid: routineTask.rid,
-                doneDate: _status == true ? DateTime.now() : null);
+                doneDate:
+                    _doneDate ?? (_status == true ? DateTime.now() : null));
             TodoService().add(todo.toJson(todo));
           }
+        } else if (_repetition.index == Repetition.weekly.index) {
+          for (var i = routineTask.startDate ?? DateTime.now();
+              i.isBefore(_dueDate!.add(const Duration(days: 1)));
+              i = i.add(const Duration(days: 1))) {
+            //m = i.weekday % 7;
+            //n = _weekdays[(i.weekday % 7)];
+            //print(m);
+            // print(n);
+            if (_weekdays[(i.weekday % 7)]) {
+              todo = Todo(
+                  title: _title.text,
+                  description: _description.text,
+                  priority: _priority,
+                  dueDate: i,
+                  status: false,
+                  rid: routineTask.rid,
+                  doneDate:
+                      _doneDate ?? (_status == true ? DateTime.now() : null));
+              TodoService().add(todo.toJson(todo));
+            }
+          }
         }
-        if (_repetition == Repetition.weekly) {}
       }
       Navigator.pop(context);
     }
@@ -463,10 +518,12 @@ class _AddEditTodoState extends State<AddEditTodo> {
       _title.text = routineTask.title;
       _description.text = routineTask.description as String;
       _priority = routineTask.priority as int;
-      _status = routineTask.status as bool;
       _routine = true;
       _dueDate =
           routineTask.dueDate == null ? null : routineTask.dueDate!.toLocal();
+      _startDate = widget.routineTask!.startDate == null
+          ? null
+          : widget.routineTask!.startDate!.toLocal();
       _weekdays = routineTask.weekdays;
       _repetition = Repetition.values[routineTask.repetition as int];
       return mainWidget();

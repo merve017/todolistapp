@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -33,8 +33,9 @@ class Quotes extends StatelessWidget {
       // If the server did return a 200 OK response,
       // then parse the JSON.
       final json = jsonDecode(response.body);
+      final Random random = Random();
       //  final jsonresult = json[0]['text'];
-      return Quote.fromJson(json[0]);
+      return Quote.fromJson(json[random.nextInt(250)]);
     } else {
       // If the server did not return a 200 OK response,
       // then throw an exception.

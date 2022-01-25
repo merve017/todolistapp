@@ -8,8 +8,8 @@ import 'todo_tile.dart';
 class ListStreamBuilder extends StatelessWidget {
   final dynamic query;
   final String? site;
-  late List<Todo> todos = [];
-  late List<Todo> actualtodos = [];
+  final List<Todo> todos = [];
+  final List<Todo> actualtodos = [];
   ListStreamBuilder({Key? key, required this.query, this.site})
       : super(key: key);
 

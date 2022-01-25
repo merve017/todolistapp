@@ -76,7 +76,7 @@ class Todo {
       doneDate: json['done_date'] == null
           ? null
           : json['done_date'].toDate() as DateTime?,
-      rid: json['rid'] == null ? '' : json['rid'] as String,
+      rid: json['rid'] == null ? null : json['rid'] as String,
     );
   }
 

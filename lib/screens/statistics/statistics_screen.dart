@@ -42,19 +42,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               } else {
                 // if (snapshot.hasData && snapshot.data!.size > 0) {
                 return SingleChildScrollView(
+                    controller: ScrollController(),
                     child: Wrap(
-                  children: [
-                    // snapshot.data!.docs.where((QueryDocumentSnapshot<Object?> element) => element['status'].toString());
-                    Container(
-                        alignment: Alignment.centerLeft,
-                        child:
-                            Text('Anzahl der Todos: ${snapshot.data!.size}')),
-                    placeHolder,
-                    SimplePieChart(snapshot: snapshot),
-                    placeHolder,
-                    ColumnDefault(snapshot: snapshot)
-                  ],
-                ));
+                      children: [
+                        // snapshot.data!.docs.where((QueryDocumentSnapshot<Object?> element) => element['status'].toString());
+                        Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                                'Anzahl der Todos: ${snapshot.data!.size}')),
+                        placeHolder,
+                        SimplePieChart(snapshot: snapshot),
+                        placeHolder,
+                        ColumnDefault(snapshot: snapshot)
+                      ],
+                    ));
               }
             });
   }

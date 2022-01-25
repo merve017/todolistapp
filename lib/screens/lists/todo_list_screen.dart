@@ -16,22 +16,26 @@ class _TodoListState extends State<TodoList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(physics: const ClampingScrollPhysics(), children: [
-      ExpansionTile(
-          title: const Text("Offene To-Do's"),
-          initiallyExpanded: true,
-          children: [
-            ListStreamBuilder(
-                query: TodoService().getTodoListOfCurrentUserofOpenTodos())
-          ]),
-      ExpansionTile(
-          title: const Text("Erledigte To-Do's"),
-          initiallyExpanded: true,
-          children: [
-            ListStreamBuilder(
-                query: TodoService().getTodoListOfCurrentUserofClosedTodos())
-          ]),
-    ]);
+    return ListView(
+        controller: ScrollController(),
+        physics: const ClampingScrollPhysics(),
+        children: [
+          ExpansionTile(
+              title: const Text("Offene To-Do's"),
+              initiallyExpanded: true,
+              children: [
+                ListStreamBuilder(
+                    query: TodoService().getTodoListOfCurrentUserofOpenTodos())
+              ]),
+          ExpansionTile(
+              title: const Text("Erledigte To-Do's"),
+              initiallyExpanded: true,
+              children: [
+                ListStreamBuilder(
+                    query:
+                        TodoService().getTodoListOfCurrentUserofClosedTodos())
+              ]),
+        ]);
   }
 
   /*getData(bool status) async {
