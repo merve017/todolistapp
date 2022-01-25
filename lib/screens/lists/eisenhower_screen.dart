@@ -278,7 +278,31 @@ class _EisenhowerScreenState extends State<EisenhowerScreen> {
       },
       onAccept: (Todo todo) {
         setState(() {
-          todo.priority = priority;
+          if (priority == 4) {
+            todo.dueDate = DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day);
+            if (todo.priority != 3) todo.priority = 4;
+          } else if (priority == 2) {
+            todo.dueDate = DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day);
+            if (todo.priority != 1) todo.priority = 2;
+          } else if (priority == 3) {
+            if (todo.priority != 4) todo.priority = 3;
+            if (todo.dueDate != null) {
+              if (todo.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day))) {
+                todo.dueDate = null;
+              }
+            }
+          } else {
+            if (todo.priority != 2) todo.priority = 1;
+            if (todo.dueDate != null) {
+              if (todo.dueDate!.isAtSameMomentAs(DateTime(DateTime.now().year,
+                  DateTime.now().month, DateTime.now().day))) {
+                todo.dueDate = null;
+              }
+            }
+          }
           TodoService().updateByID(todo.toJson(todo), todo.uid as String);
         });
       },
