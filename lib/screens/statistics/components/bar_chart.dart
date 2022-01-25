@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:todolist_app/models/todo_model.dart';
 
+// ignore: must_be_immutable
 class ColumnDefault extends StatelessWidget {
   ColumnDefault({Key? key, required this.snapshot}) : super(key: key);
 
