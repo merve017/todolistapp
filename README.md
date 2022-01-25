@@ -5,7 +5,7 @@ The To-Do App is based on Flutter and Firebase/firestore and developed by Carlo 
 
 ## Getting Started
 - Clone the repo
-- Install the dependicies
+- Install the dependencies
 - Run it
 
 
