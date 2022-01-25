@@ -521,9 +521,9 @@ class _AddEditTodoState extends State<AddEditTodo> {
       _routine = true;
       _dueDate =
           routineTask.dueDate == null ? null : routineTask.dueDate!.toLocal();
-      _startDate = widget.routineTask!.startDate == null
+      _startDate = routineTask.startDate == null
           ? null
-          : widget.routineTask!.startDate!.toLocal();
+          : routineTask.startDate!.toLocal();
       _weekdays = routineTask.weekdays;
       _repetition = Repetition.values[routineTask.repetition as int];
       return mainWidget();

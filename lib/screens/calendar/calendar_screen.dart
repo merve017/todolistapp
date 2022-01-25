@@ -110,6 +110,7 @@ class EventCalendarState extends State<EventCalendar> {
       onViewChanged: onViewChanged,
       firstDayOfWeek: 1,
       controller: controller,
+      todayHighlightColor: Colors.blue,
       allowViewNavigation: false,
       dataSource: _calendarDataSource,
       onTap: calendarTapCallback,
@@ -150,6 +151,7 @@ class EventCalendarState extends State<EventCalendar> {
       //     DateTime.now().day, 0, 0, 0),
       monthViewSettings: const MonthViewSettings(
         showAgenda: true,
+        agendaItemHeight: 50,
         //appointmentDisplayMode: MonthAppointmentDisplayMode.appointment
       ),
       timeSlotViewSettings: const TimeSlotViewSettings(

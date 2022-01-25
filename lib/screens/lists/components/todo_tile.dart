@@ -50,7 +50,10 @@ class ToDoTile extends StatelessWidget {
               if (todo != null)
                 {TodoService().deleteByID(todo!.uid as String)}
               else
-                {RoutineService().deleteByID(routineTask!.rid as String)}
+                {
+                  RoutineService().deleteByID(routineTask!.rid as String),
+                  TodoService().deleteByRID(routineTask!.rid as String)
+                }
             },
           ),
         ],
