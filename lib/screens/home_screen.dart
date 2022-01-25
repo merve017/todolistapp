@@ -5,9 +5,8 @@ import 'package:todolist_app/models/user_model.dart';
 import 'package:todolist_app/screens/authentication/authentication_screen.dart';
 import 'package:todolist_app/shared/constants.dart';
 import 'dashboard/dashboard_screen.dart';
-import 'package:todolist_app/screens/authentication/components/signin.dart';
-import 'package:todolist_app/screens/add_edit_todo.dart';
-import 'package:todolist_app/screens/eisenhower_screen.dart';
+import 'package:todolist_app/screens/add_edit_todo/add_edit_todo.dart';
+import 'package:todolist_app/screens/lists/eisenhower_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:todolist_app/service/auth_service.dart';
@@ -15,7 +14,7 @@ import 'package:todolist_app/service/auth_service.dart';
 import '../responsive.dart';
 import 'calendar/calendar_screen.dart';
 import 'lists/actual_todo_list_screen.dart';
-import 'myprofile_screen.dart';
+import 'profile/myprofile_screen.dart';
 import 'lists/routine_list_screen.dart';
 import 'statistics/statistics_screen.dart';
 import 'lists/todo_list_screen.dart';
@@ -163,6 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Drawer sidemenu() {
     return Drawer(
       child: ListView(
+        controller: ScrollController(),
         padding: EdgeInsets.zero,
         children: [
           if (!Responsive.isDesktop(context) == true) ...[
@@ -170,10 +170,9 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: Colors.lightBlue[100],
               ),
-              child: const Expanded(
-                  child: Image(
+              child: const Image(
                 image: AssetImage("assets/images/logo_beschriftung.png"),
-              )),
+              ),
             )
           ],
           sideMenuListTile(const Icon(Icons.dashboard_rounded), 'Dashboard',
