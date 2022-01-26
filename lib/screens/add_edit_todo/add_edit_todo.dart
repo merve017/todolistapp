@@ -359,13 +359,13 @@ class _AddEditTodoState extends State<AddEditTodo> {
     ));
   }
 
-  submit(BuildContext context) {
+  submit(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       late RoutineTask routineTask;
       late Todo todo;
       if (_routine) {
         routineTask = RoutineTask(
-            rid: RoutineService().getID(),
+            rid: widget.routineTask!.rid ?? RoutineService().getID(),
             title: _title.text,
             description: _description.text,
             priority: _priority,
@@ -390,29 +390,64 @@ class _AddEditTodoState extends State<AddEditTodo> {
         TodoService().add(todo.toJson(todo));
       } else {
         if (widget.routineTask != null) {
-          TodoService().deleteByRID(widget.rid!);
+          await TodoService().deleteByRID(routineTask.rid!);
         }
-        if (widget.routineTask == null) {
+        if (widget.routineTask == null && widget.rid == null) {
           RoutineService().add(routineTask.toJson(routineTask));
+        } else {
+          await RoutineService()
+              .updateByID(routineTask.toJson(routineTask), routineTask.rid!);
         }
-        _dueDate ??= DateTime.now().add(const Duration(days: 366));
+
         if (_repetition.index == Repetition.yearly.index) {
-          todo = Todo(
-              title: _title.text,
-              description: _description.text,
-              priority: _priority,
-              dueDate: DateTime.now().add(const Duration(days: 365)),
-              status: false,
-              rid: routineTask.rid,
-              doneDate: _status == true ? DateTime.now() : null);
-          TodoService().add(todo.toJson(todo));
-        } else if (_repetition.index == Repetition.monthly.index) {
+          _dueDate ??= DateTime.now().add(const Duration(days: 1825));
           int year = routineTask.startDate!.year;
           int month = routineTask.startDate!.month;
           int day = routineTask.startDate!.day;
           for (var i = _startDate ?? DateTime.now();
               i.isBefore(_dueDate!);
               i = DateTime(year, month, day)) {
+            todo = Todo(
+                title: _title.text,
+                description: _description.text,
+                priority: _priority,
+                dueDate: i,
+                status: false,
+                rid: routineTask.rid,
+                doneDate:
+                    _doneDate ?? (_status == true ? DateTime.now() : null));
+            TodoService().add(todo.toJson(todo));
+
+            year = i.year + 1;
+            month = i.month;
+            day = i.day;
+            if (_startDate!.day == 31 &&
+                ((month < 7 && month.isEven) || (month > 8 && month.isOdd))) {
+              if (month == 2) {
+                day = 28;
+              }
+              day = 30;
+            }
+          }
+        } else if (_repetition.index == Repetition.monthly.index) {
+          _dueDate ??= DateTime.now().add(const Duration(days: 732));
+          int year = routineTask.startDate!.year;
+          int month = routineTask.startDate!.month;
+          int day = routineTask.startDate!.day;
+          for (var i = _startDate ?? DateTime.now();
+              i.isBefore(_dueDate!);
+              i = DateTime(year, month, day)) {
+            todo = Todo(
+                title: _title.text,
+                description: _description.text,
+                priority: _priority,
+                dueDate: i,
+                status: false,
+                rid: routineTask.rid,
+                doneDate:
+                    _doneDate ?? (_status == true ? DateTime.now() : null));
+            TodoService().add(todo.toJson(todo));
+
             year = i.year;
             month = i.month + 1;
             day = i.day;
@@ -424,20 +459,10 @@ class _AddEditTodoState extends State<AddEditTodo> {
                 ((month < 7 && month.isEven) || (month > 8 && month.isOdd))) {
               if (month == 2) {
                 day = 28;
+              } else {
+                day = 30;
               }
-              day = 30;
             }
-
-            todo = Todo(
-                title: _title.text,
-                description: _description.text,
-                priority: _priority,
-                dueDate: i,
-                status: false,
-                rid: routineTask.rid,
-                doneDate:
-                    _doneDate ?? (_status == true ? DateTime.now() : null));
-            TodoService().add(todo.toJson(todo));
           }
         } else if (_repetition.index == Repetition.weekly.index) {
           for (var i = routineTask.startDate ?? DateTime.now();

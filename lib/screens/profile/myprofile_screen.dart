@@ -21,7 +21,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return SingleChildScrollView(
       child: ListView(
         shrinkWrap: true,
-        children: (AuthService.googleSignIn.currentUser) == null
+        children: (AuthService.user!.providerData[0].providerId != 'google.com')
             ? [
                 ListTile(
                     leading: const Icon(Icons.person),
@@ -52,13 +52,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.person),
-                  title: Text(
-                      "Name: ${AuthService.googleSignIn.currentUser!.displayName}"),
+                  title: Text("Name: ${AuthService.user!.displayName}"),
                 ),
                 ListTile(
                   leading: const Icon(Icons.email),
-                  title: Text(
-                      "E-Mail Adresse: ${AuthService.googleSignIn.currentUser!.email}"),
+                  title: Text("E-Mail Adresse: ${AuthService.user!.email}"),
                 ),
               ],
       ),

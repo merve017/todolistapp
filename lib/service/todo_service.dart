@@ -111,15 +111,14 @@ class TodoService extends DatabaseService {
           }
         }*/
 
-  deleteByRID(String rid) async {
-    getCollectionReference()
+  Future deleteByRID(String rid) async {
+    final allUserDocuments = await getCollectionReference()
         .where("rid", isEqualTo: rid)
         .where("due_date", isGreaterThanOrEqualTo: DateTime.now())
-        .get()
-        .then((snapshot) {
-      for (DocumentSnapshot doc in snapshot.docs) {
-        doc.reference.delete();
-      }
-    });
+        .get();
+
+    for (DocumentSnapshot doc in allUserDocuments.docs) {
+      await deleteByID(doc.id);
+    }
   }
 }

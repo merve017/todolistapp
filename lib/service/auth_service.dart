@@ -204,7 +204,7 @@ class AuthService extends DatabaseService {
         userCredential = await _auth.signInWithCredential(googleAuthCredential);
       }
 
-      final user = userCredential.user;
+      user = userCredential.user;
       Fluttertoast.showToast(
         msg: ('Sign In ${user!.uid} with Google'),
       );
